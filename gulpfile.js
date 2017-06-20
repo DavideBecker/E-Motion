@@ -54,6 +54,8 @@ var dist = {
     'img': baseUrl + distUrl + 'img/',
 }
 
+var scriptPipe = [src.js + '**', '!' + src.js + vendorFolder + '**']
+
 function fixedLength(str, len) {
     return str + Array(len).join(' ').slice(-len + str.length);
 }
@@ -72,7 +74,7 @@ gulp.task('styles', function() {
 })
 
 gulp.task('scripts:lint', function() {
-    gulp.src(src.js + '*.js')
+    gulp.src(scriptPipe)
         .pipe(eslint({
             fix: false,
             useEslintrc: true
@@ -86,7 +88,7 @@ gulp.task('scripts:lint', function() {
                 result.messages.forEach(function(err) {
                     console.log(
                         '    ' +
-                        fixedLength(err.ruleId ? err.ruleId : '', 20).info +
+                        fixedLength(err.ruleId ? err.ruleId : '', 32).info +
                         fixedLength('Line ' + err.line + ':' + err.column, 16).verbose +
                         fixedLength(eslintErrorSeverity[err.severity], 10) + ' ' + err.message);
                 });
@@ -95,20 +97,20 @@ gulp.task('scripts:lint', function() {
 })
 
 gulp.task('scripts', ['scripts:lint'], function() {
-    gulp.src([src.js + '*.js', src.js + src.jsMain])
+    gulp.src(scriptPipe)
         .pipe(sourcemaps.init())
-        .pipe(concat(src.jsMain))
+        // .pipe(concat(src.jsMain))
         // .pipe(include({
         //     includePaths: [
         //         path.join(__dirname, 'src', 'scripts'),
         //     ]
         // }))
-            // .on('error', console.log)
-        .pipe(gulp.dest(dist.js))
-        //.pipe(sourcemaps.write('./'))
+        // .on('error', console.log)
+        // .pipe(gulp.dest(dist.js))
         .pipe(uglify().on('error', function(err) {
             console.log('\n    ' + err.toString().replace(new RegExp('\n', 'g'), '\n    '));
         }))
+        .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest(dist.js));
 
     gulp.src(src.js + vendorFolder + '/**').pipe(gulp.dest(dist.js + vendorFolder));
