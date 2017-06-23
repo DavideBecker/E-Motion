@@ -5,7 +5,7 @@ var config = {
     emotion: {
         capacity: 400, // kWh
         chargeSpeed: 120, // kWh
-        milage: 22, // kWh per 100 KM
+        mileage: 22, // kWh per 100 KM
         averageSpeed: 40 // km/h
     },
     car: {
@@ -13,19 +13,61 @@ var config = {
         chargeSpeed: 22, // kWh
         mileage: 15 // kWh per 100 KM
     },
-    averageDistanceBetweenCharges: 800, // M
-    averageDistanceToLocation:  20 // KM
+    averageDistanceBetweenCharges: 1000, // M
+    averageDistanceToLocation:  20, // KM
+    chargePercentage: 0.25 //decimal percentage (0.8 as 80%)
 }
 
 
 // Helper functions
-function prettyTime(secs) {
-    if(secs < 60) return secs + ' second(s)';
-    if(secs < 3600) return Math.floor(secs / 60) + ' minute(s)';
-    if(secs < 86400) return Math.floor(secs / 3600) + ' hour(s)';
-    if(secs < 604800) return Math.floor(secs / 86400) + ' day(s)';
+function prettyTime(time) {
+    var hours   = Math.floor(time / 3600);
+    var minutes = Math.floor((time - hours * 3600) / 60);
+    var seconds = Math.floor(time - hours * 3600 - minutes * 60);
 
-    return date.toDateString();
+    if(hours < 10) { hours = '0' + hours; }
+    if(minutes < 10) { minutes = '0' + minutes; }
+    if(seconds < 10) { seconds = '0' + seconds; }
+
+    return hours + ':' + minutes + ':' + seconds;
+}
+
+function convertTime(time, from, to) {
+    var secs = time;
+
+    if(from == 'm') { secs = time * 60 }
+    if(from == 'h') { secs = time * 60 * 60 }
+    if(from == 'd') { secs = time * 60 * 60 * 24 }
+
+    if(to == 's') { return secs }
+    if(to == 'm') { return secs / 60 }
+    if(to == 'h') { return secs / 60 / 60 }
+    if(to == 'd') { return secs / 60 / 60 / 24 }
+
+    return false;
+}
+
+function prettyPrintConfig() {
+    console.log('CONFIG');
+    console.log('   EMOTION');
+    console.log('      Capacity:              ', config.emotion.capacity, 'kWh');
+    console.log('      Charging speed:        ', config.emotion.chargeSpeed, 'kWh');
+    console.log('      Mileage:               ', config.emotion.mileage, 'kWh per 100 KM');
+    console.log('      Average driving speed: ', config.emotion.averageSpeed, 'km/h');
+    console.log('   CAR');
+    console.log('      Capacity:              ', config.car.capacity, 'kWh');
+    console.log('      Charging speed:        ', config.car.chargeSpeed, 'kWh');
+    console.log('      Mileage:               ', config.car.mileage, 'kWh per 100 KM');
+    console.log('   VALUES');
+    console.log('      Average distance a truck has to travel between charges: ', config.averageDistanceBetweenCharges, 'M');
+    console.log('      Average distance between locations (villages etc):      ', config.averageDistanceToLocation, 'KM');
+    console.log('      Amount a truck charges each car:                        ', config.chargePercentage * 100, '%');
+
+
+    // averageDistanceBetweenCharges: 1000, // M
+    // averageDistanceToLocation:  20, // KM
+    // chargePercentage: 0.25 //decimal percentage (0.8 as 80%)
+
 }
 
 
@@ -58,7 +100,7 @@ function calculateChargingCapacity(reach, mileage, distanceToLocation) {
 // capacityOfCar in KM is the result of calculateReach()
 // returns amount of cars a truck can charge
 function calculateAmountOfCarsThatCanBeCharged(chargingCapacity, capacityOfCar) {
-    return chargingCapacity / (capacityOfCar / 2)
+    return chargingCapacity / (capacityOfCar * config.chargePercentage)
 }
 
 // Calculate the time it takes for something to charge
@@ -88,22 +130,42 @@ function calculateChargeCycleTime(chargeableCars, averageTimeBetweenCharges, cha
     return chargeableCars * chargeTime + chargeableCars * averageTimeBetweenCharges
 }
 
+// Calculate how long it takes on average for a single car to get charged
+// chargeableCars in amount is the result of calculateAmountOfCarsThatCanBeCharged()
+// chargeCycleTime in seconds is the result of calculateChargeCycleTime()
+// returns seconds
+function calculateAverageChargeTime(chargeableCars, chargeCycleTime) {
+    return chargeCycleTime / chargeableCars
+}
+
+// Caclulate how many cars a truck can charge per day
+// averageChargeTime in seconds is the result of calculateAverageChargeTime()
+// availableTime in seconds
+// returns amount of cars charged per day
+function calculateChargeableCarsInTimeframe(averageChargeTime, availableTime) {
+    return Math.floor(availableTime / averageChargeTime * 10) / 10
+}
+
 
 // Test output
-var chargingCapacity = calculateChargingCapacity(config.emotion.capacity, config.emotion.milage, config.averageDistanceToLocation)
+var chargingCapacity = calculateChargingCapacity(config.emotion.capacity, config.emotion.mileage, config.averageDistanceToLocation)
 
 var amountOfCarsThatCanBeCharged = calculateAmountOfCarsThatCanBeCharged(chargingCapacity, config.car.capacity);
 var travelTime = calculateTravelTime(config.averageDistanceBetweenCharges, config.emotion.averageSpeed);
-var chargeTime = calculateChargeTime(config.car.capacity, config.car.chargeSpeed, 0.5);
+var chargeTime = calculateChargeTime(config.car.capacity, config.car.chargeSpeed, config.chargePercentage);
 
 var chargeCycleTime = calculateChargeCycleTime(amountOfCarsThatCanBeCharged, travelTime, chargeTime);
 // + calculateTravelTime(config.averageDistanceToLocation * 2, config.emotion.averageSpeed)
 
-console.log('');
+var averageChargeTime = calculateAverageChargeTime(amountOfCarsThatCanBeCharged, chargeCycleTime);
 
-console.log('config = ' + JSON.stringify(config, null, 4));
+var carsChargedInFiveHours = calculateChargeableCarsInTimeframe(averageChargeTime, convertTime(5, 'h', 's'))
 
-console.log('');
+console.log();
+
+prettyPrintConfig();
+
+console.log();
 
 console.log('chargingCapacity', chargingCapacity, 'kWh');
 
@@ -113,8 +175,11 @@ console.log('chargeTime', prettyTime(chargeTime), chargeTime);
 
 console.log('chargeCycleTime', prettyTime(chargeCycleTime), chargeCycleTime);
 
-console.log('');
+console.log('averageChargeTime', prettyTime(averageChargeTime), averageChargeTime);
 
-console.log('On average a truck takes about', prettyTime(chargeCycleTime), 'to charge', amountOfCarsThatCanBeCharged, 'cars until it needs to recharge')
+console.log()
 
-console.log('');
+console.log('On average a truck takes', prettyTime(chargeCycleTime), 'to charge', amountOfCarsThatCanBeCharged, 'cars until it needs to recharge')
+console.log('In five hours a truck can charge', carsChargedInFiveHours, 'cars by', config.chargePercentage * 100, '%');
+
+console.log();
