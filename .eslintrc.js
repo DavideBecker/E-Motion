@@ -71,7 +71,7 @@ module.exports = {
             "error",
             { "overrides": { "if": { "after": false }, "for": { "after": false }, "while": { "after": false } } }
         ],
-        "line-comment-position": "error",
+        "line-comment-position": "off",
         "linebreak-style": [
             "error",
             "unix"
@@ -124,7 +124,7 @@ module.exports = {
         "no-implicit-coercion": "error",
         "no-implicit-globals": "off",
         "no-implied-eval": "error",
-        "no-inline-comments": "error",
+        "no-inline-comments": "off",
         "no-invalid-this": "error",
         "no-iterator": "error",
         "no-label-var": "error",
