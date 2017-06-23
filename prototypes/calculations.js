@@ -13,11 +13,11 @@ var config = {
         chargeSpeed: 22, // kWh
         mileage: 15 // kWh per 100 KM
     },
-    averageDistanceBetweenCharges: 1000, // M
-    averageDistanceToLocation:  20, // KM
-    averageTruckUptime: 5, // Hours
+    averageDistanceBetweenCharges: random(500, 2000), // M
+    averageDistanceToLocation:  random(20, 40), // KM
+    averageTruckUptime: random(3, 8), // Hours
     chargePercentage: 0.25, //decimal percentage (0.8 as 80%)
-    deployedTrucks: 10, // Amount of trucks
+    deployedTrucks: random(5, 50), // Amount of trucks
 }
 
 
@@ -76,6 +76,10 @@ function prettyPrintConfig() {
 
 function fineRound(number) {
     return Math.floor(number * 10) / 10
+}
+
+function random(min, max) {
+    return Math.floor(Math.random() * max) + min
 }
 
 
@@ -162,13 +166,12 @@ var amountOfCarsThatCanBeCharged = calculateAmountOfCarsThatCanBeCharged(chargin
 var travelTime = calculateTravelTime(config.averageDistanceBetweenCharges, config.emotion.averageSpeed);
 var chargeTime = calculateChargeTime(config.car.capacity, config.car.chargeSpeed, config.chargePercentage);
 
-var chargeCycleTime = calculateChargeCycleTime(amountOfCarsThatCanBeCharged, travelTime, chargeTime);
-// + calculateTravelTime(config.averageDistanceToLocation * 2, config.emotion.averageSpeed)
+var chargeCycleTime = calculateChargeCycleTime(amountOfCarsThatCanBeCharged, travelTime, chargeTime) + calculateTravelTime(config.averageDistanceToLocation, config.emotion.averageSpeed) * 1000
 
 var averageChargeTime = calculateAverageChargeTime(amountOfCarsThatCanBeCharged, chargeCycleTime);
 
 var carsChargedPerTruck = calculateChargeableCarsInTimeframe(averageChargeTime, convertTime(config.averageTruckUptime, 'h', 's'));
-var carsChargedPerDay = carsChargedPerTruck * config.deployedTrucks;
+var carsChargedPerDay = Math.floor(carsChargedPerTruck * config.deployedTrucks);
 var carsChargedPerMonth = Math.floor(carsChargedPerDay * 30.4);
 var carsChargedPerYear = Math.floor(carsChargedPerDay * 365.25);
 
@@ -198,6 +201,7 @@ console.log('Charging each car by', config.chargePercentage * 100, '% allows the
 console.log('On average a truck takes', prettyTime(chargeCycleTime), 'to charge', fineRound(amountOfCarsThatCanBeCharged), 'cars until it needs to recharge')
 console.log('In', config.averageTruckUptime, 'hours a truck can charge', carsChargedPerTruck, 'cars by', config.chargePercentage * 100, '%');
 console.log('All', config.deployedTrucks, 'trucks can charge', carsChargedPerDay, 'cars per day');
-console.log('In total, that\'s', carsChargedPerMonth, 'cars per month, or', carsChargedPerYear, 'cars per year');
+console.log('That\'s', fineRound(carsChargedPerMonth / config.deployedTrucks), 'cars per month, or', fineRound(carsChargedPerYear / config.deployedTrucks), 'cars per year which a single truck can charge')
+console.log('Or in total for', config.deployedTrucks, 'trucks,', carsChargedPerMonth, 'cars per month, or', carsChargedPerYear, 'cars per year');
 
 console.log();
