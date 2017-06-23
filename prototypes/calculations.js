@@ -15,7 +15,9 @@ var config = {
     },
     averageDistanceBetweenCharges: 1000, // M
     averageDistanceToLocation:  20, // KM
-    chargePercentage: 0.25 //decimal percentage (0.8 as 80%)
+    averageTruckUptime: 5, // Hours
+    chargePercentage: 0.25, //decimal percentage (0.8 as 80%)
+    deployedTrucks: 10, // Amount of trucks
 }
 
 
@@ -35,12 +37,12 @@ function prettyTime(time) {
 function convertTime(time, from, to) {
     var secs = time;
 
-    if(from == 'm') { secs = time * 60 }
+    if(from == 'i') { secs = time * 60 }
     if(from == 'h') { secs = time * 60 * 60 }
     if(from == 'd') { secs = time * 60 * 60 * 24 }
 
     if(to == 's') { return secs }
-    if(to == 'm') { return secs / 60 }
+    if(to == 'i') { return secs / 60 }
     if(to == 'h') { return secs / 60 / 60 }
     if(to == 'd') { return secs / 60 / 60 / 24 }
 
@@ -59,15 +61,21 @@ function prettyPrintConfig() {
     console.log('      Charging speed:        ', config.car.chargeSpeed, 'kWh');
     console.log('      Mileage:               ', config.car.mileage, 'kWh per 100 KM');
     console.log('   VALUES');
-    console.log('      Average distance a truck has to travel between charges: ', config.averageDistanceBetweenCharges, 'M');
-    console.log('      Average distance between locations (villages etc):      ', config.averageDistanceToLocation, 'KM');
-    console.log('      Amount a truck charges each car:                        ', config.chargePercentage * 100, '%');
+    console.log('      Average distance a truck has to travel between charges:   ', config.averageDistanceBetweenCharges, 'M');
+    console.log('      Average distance between locations (villages etc):        ', config.averageDistanceToLocation, 'KM');
+    console.log('      Average time a truck is driving around and charging cars: ', config.averageTruckUptime, 'hours');
+    console.log('      Percentage of the capacity a truck charges each car:      ', config.chargePercentage * 100, '%');
+    console.log('      Amount of trucks that are deployed:                       ', config.deployedTrucks, 'trucks');
 
 
     // averageDistanceBetweenCharges: 1000, // M
     // averageDistanceToLocation:  20, // KM
     // chargePercentage: 0.25 //decimal percentage (0.8 as 80%)
 
+}
+
+function fineRound(number) {
+    return Math.floor(number * 10) / 10
 }
 
 
@@ -159,13 +167,18 @@ var chargeCycleTime = calculateChargeCycleTime(amountOfCarsThatCanBeCharged, tra
 
 var averageChargeTime = calculateAverageChargeTime(amountOfCarsThatCanBeCharged, chargeCycleTime);
 
-var carsChargedInFiveHours = calculateChargeableCarsInTimeframe(averageChargeTime, convertTime(5, 'h', 's'))
+var carsChargedPerTruck = calculateChargeableCarsInTimeframe(averageChargeTime, convertTime(config.averageTruckUptime, 'h', 's'));
+var carsChargedPerDay = carsChargedPerTruck * config.deployedTrucks;
+var carsChargedPerMonth = Math.floor(carsChargedPerDay * 30.4);
+var carsChargedPerYear = Math.floor(carsChargedPerDay * 365.25);
 
 console.log();
 
 prettyPrintConfig();
 
 console.log();
+
+console.log('RAW VALUES')
 
 console.log('chargingCapacity', chargingCapacity, 'kWh');
 
@@ -179,7 +192,12 @@ console.log('averageChargeTime', prettyTime(averageChargeTime), averageChargeTim
 
 console.log()
 
-console.log('On average a truck takes', prettyTime(chargeCycleTime), 'to charge', amountOfCarsThatCanBeCharged, 'cars until it needs to recharge')
-console.log('In five hours a truck can charge', carsChargedInFiveHours, 'cars by', config.chargePercentage * 100, '%');
+console.log('RESULTS')
+
+console.log('Charging each car by', config.chargePercentage * 100, '% allows them to travel', fineRound(calculateReach(config.car.capacity * config.chargePercentage, config.car.mileage)), 'KM')
+console.log('On average a truck takes', prettyTime(chargeCycleTime), 'to charge', fineRound(amountOfCarsThatCanBeCharged), 'cars until it needs to recharge')
+console.log('In', config.averageTruckUptime, 'hours a truck can charge', carsChargedPerTruck, 'cars by', config.chargePercentage * 100, '%');
+console.log('All', config.deployedTrucks, 'trucks can charge', carsChargedPerDay, 'cars per day');
+console.log('In total, that\'s', carsChargedPerMonth, 'cars per month, or', carsChargedPerYear, 'cars per year');
 
 console.log();
