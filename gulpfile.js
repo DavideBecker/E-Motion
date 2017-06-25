@@ -15,7 +15,8 @@ var gulp            = require('gulp'),
     autoprefixer    = require('gulp-autoprefixer'),
 
     uglify          = require('gulp-uglify'),
-    concat          = require('gulp-concat'),
+    babel           = require('gulp-babel'),
+    // concat          = require('gulp-concat'),
     // include         = require('gulp-include'),
 
     imagemin        = require('gulp-imagemin')
@@ -109,6 +110,7 @@ gulp.task('scripts', ['scripts:lint'], function() {
         // }))
         // .on('error', console.log)
         // .pipe(gulp.dest(dist.js))
+        .pipe(babel())
         .pipe(uglify().on('error', function(err) {
             console.log('\n    ' + err.toString().replace(new RegExp('\n', 'g'), '\n    '));
         }))
