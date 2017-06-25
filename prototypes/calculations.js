@@ -53,7 +53,7 @@ function convertTime(time, from, to) {
     if(from == 'd') { secs = time * 60 * 60 * 24 }
     if(from == 'w') { secs = time * 60 * 60 * 24 * 7 }
     if(from == 'm') { secs = time * 60 * 60 * 24 * 30.4375 }
-    if(from == 'y') { secs = time * 60 * 60 * 24 * 365.25}
+    if(from == 'y') { secs = time * 60 * 60 * 24 * 365.25 }
 
     if(to == 's') { return secs }
     if(to == 'i') { return secs / 60 }
