@@ -6,9 +6,9 @@ class Car{
 		this.y;
 		this.x;
 		//returns home to this node when returnHome(); is called
-		this.homeNode = homeNode
+		this.homeNode;
 		//dist the car moves between two frames
-		this.speed = 3; 
+		this.speed = 1; 
 		//capacity
 		this.capacity;
 		//amount of energy used while driving
@@ -24,7 +24,7 @@ class Car{
 		this.targetNode;
 		this.toNode;
 		this.moving = false;
-		this.moveDir = new Vector(0,0);
+		this.moveDir = createVector(0,0);
 	
 		this.stepsNeeded;
 		this.currentStep;
@@ -38,29 +38,35 @@ class Car{
 		if(this.moving){
 
 			//move first, think later
-			this.x+=moveDir.x;
-			this.y+=moveDir.y;
+			console.log("moved from "+this.x+" "+this.y+" to: "+this.x+this.moveDir.x+" "+this.y+this.moveDir.y)
+			this.x+=this.moveDir.x;
+			this.y+=this.moveDir.y;
 			this.currentStep++;
 
 			//check if it reached a Node;
-			if(this.stepsNeeded-1>this.currentStep){
+			if(this.stepsNeeded-1<this.currentStep){
 
 				//check if its not the targetNode
-				if(this.moveStack[this.moveStack.length-1]!=this.targetNode){
+				if(this.moveStack.length<1){
+
+					//if it reached it targetNode
+					//stop Moving and get on the exact position of the Node
+					//to hide behind it
+					console.log("the car reached the target");
 					
-					//move to the next Node 
-					this.startShortMove(this.toNode,this.moveStack.pop());
+					this.moving = false;
+					this.x = this.targetNode.x;
+					this.y = this.targetNode.y;
+					
 					
 				}
 				
 				else{
 
-					//if it reached it targetNode
-					//stop Moving and get on the exact position of the Node
-					//to hide behind it
-					this.moving = false;
-					this.x = targetNode.x;
-					this.y = targetNode.y;
+
+					//move to the next Node 
+					
+					this.startShortMove(this.toNode,this.moveStack.pop());
 
 				}
 
@@ -73,15 +79,23 @@ class Car{
 	startShortMove(from,to){
 
 
-		this.moveDir = (to.x-from.x,to.y-from.y);
+		this.x = from.x;
+		this.y = from.y;
+		this.moveDir.set(to.x-from.x,to.y-from.y);
 		var steps = dist(from.x,from.y,to.x,to.y);
 		
 		console.log("this car will take "+round(steps)+" frames to move between the nodes");
 		
 		//sets values
-		this.stepsNeeded = round(steps);
+		this.toNode = to;
+		this.stepsNeeded = round(steps)/this.speed;
 		this.currentStep = 0;
-		this.moveDir /= round(steps);
+		this.moveDir.div(round(steps));
+		this.moveDir.mult(this.speed);	
+
+		console.log(this.moveStack);
+
+
 
 	}
 
@@ -91,7 +105,15 @@ class Car{
 
 	}
 
-	startMoveWithoutPathfinder(){
+	startMoveWithoutPathfinder(moveArray){
+		
+		this.x = moveArray[moveArray.length-1].x;
+		this.y = moveArray[moveArray.length-1].y;
+
+		this.moving = true;
+		this.targetNode = moveArray[0];
+		this.moveStack = moveArray;
+		this.startShortMove(this.moveStack.pop(),this.moveStack.pop());
 
 	}
 

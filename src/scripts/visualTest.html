@@ -1,0 +1,135 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script language="javascript" type="text/javascript" src="vendor/p5.min.js"></script>
+  <script src="/car.js"></script>
+  <script src="/streetNode.js"></script>
+  <script src="/smallCity.js"></script>
+  <script src="/bigCity.js"></script>
+  <script >
+  var Nodes =[];
+ 	
+  var testCar;
+
+  function setup(){
+  	createCanvas(windowWidth,windowHeight);
+
+  	testCar = new Car();
+
+  	fill(240);
+  	stroke(230);
+
+  	//background(0);
+
+  	var Node1 = new SmallCity(200,200);
+  	var Node2 = new StreetNode(280,360);
+  	var Node3 = new StreetNode(400,400);
+  	var Node4 = new StreetNode(430,390);
+  	var Node5 = new SmallCity(370,280);
+  	var Node6 = new BigCity(330,170);
+
+  	Nodes.push(Node1);
+  	Nodes.push(Node2);
+  	Nodes.push(Node3);
+  	Nodes.push(Node4);
+  	Nodes.push(Node5);
+  	Nodes.push(Node6);
+
+  	Node1.connectedTo.push(Node2);
+  	Node2.connectedTo.push(Node3);
+  	Node3.connectedTo.push(Node4);
+  	Node4.connectedTo.push(Node5);
+  	Node5.connectedTo.push(Node6);
+  	Node6.connectedTo.push(Node1);
+
+  	//Node.connectedTo.push(Node);
+
+
+  	testCar.r = 20;
+
+  	//testCar.startMoveWithoutPathfinder([Node[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5]],Nodes[0]);
+  }
+
+  function draw(){
+
+  	background(200)
+  	
+  	fill(240);
+  	stroke(230);
+
+  	for ( var i = 0; i<Nodes.length; i++){
+  			
+  			fill(240);
+  			stroke(230);
+
+  			Nodes[i].draw();
+  		
+  			Nodes[i].drawStreets();
+  		
+  	}
+  	
+  	fill(200,200,100);
+
+  	testCar.move();
+  	ellipse(testCar.x,testCar.y,testCar.r,testCar.r);
+
+  }
+
+  var currMoving;
+  var isCurrMoving = false;
+
+  function mousePressed(){
+  for(var i = 0; i< Nodes.length;i++){
+  		if(abs(Nodes[i].x-mouseX)<20&&abs(Nodes[i].y-mouseY)<20){
+
+  		currMoving = Nodes[i];
+  		isCurrMoving = true;
+  		}
+ 	 }
+
+  }
+  
+
+  function mouseDragged(){
+  if(isCurrMoving){
+  currMoving.x= mouseX;
+  currMoving.y= mouseY;
+ 	}
+  }
+
+
+
+  function mouseReleased(){
+  isCurrMoving = false;
+  currMoving = null;
+  testCar.startMoveWithoutPathfinder([Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5]]);
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </script>
+  
+
+
+  <!-- this line removes any default padding and style. you might only need one of these values set. -->
+  <style> body {padding: 0; margin: 0;} </style>
+</head>
+
+<body>	
+</body>
+</html>

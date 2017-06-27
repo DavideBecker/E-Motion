@@ -1,12 +1,16 @@
 class StreetNode{
 	
 	constructor(atX,atY){
+		//super();
 
-		this.x =  atX;
+		this.x = atX;
 		this.y = atY;
+		
 		this.connectedTo = [];
 
 	}
+
+	draw(){};
 
 	drawStreets(){
 		for(var i = 0 ; i < this.connectedTo.length ; i++){
