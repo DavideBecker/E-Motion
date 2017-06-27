@@ -3,6 +3,9 @@ module.exports = {
         "browser": true,
         "es6": true
     },
+    "parserOptions": {
+        "ecmaVersion": 6
+    },
     "extends": "eslint:recommended",
     "rules": {
         "accessor-pairs": "error",
@@ -56,7 +59,7 @@ module.exports = {
             "error",
             {
                 "properties": "never",
-                "exceptions": ["x", "y", "w", "h"]
+                "exceptions": ["x", "y", "w", "h", "i", "c"]
             }
         ],
         "id-match": "error",
@@ -154,7 +157,10 @@ module.exports = {
         "no-octal-escape": "error",
         "no-param-reassign": "error",
         "no-path-concat": "error",
-        "no-plusplus": "error",
+        "no-plusplus": [
+            "error",
+            { "allowForLoopAfterthoughts": true }
+        ],
         "no-process-env": "error",
         "no-process-exit": "error",
         "no-proto": "error",
