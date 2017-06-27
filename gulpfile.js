@@ -45,6 +45,7 @@ var src = {
     'js': baseUrl + 'src/scripts/',
     'img': baseUrl + 'src/images/**',
     'svg': baseUrl + 'src/vectors/**',
+    'data': baseUrl + 'src/data/**',
 
     'jsMain': 'main.js',
     'cssMain': 'main.sass'
@@ -55,6 +56,7 @@ var dist = {
     'js': baseUrl + distUrl + 'js/',
     'img': baseUrl + distUrl + 'img/',
     'svg': baseUrl + distUrl + 'svg/',
+    'data': baseUrl + distUrl + 'data/'
 }
 
 var scriptPipe = [src.js + '**', '!' + src.js + vendorFolder + '**']
@@ -134,6 +136,11 @@ gulp.task('vectors', function() {
         .pipe(gulp.dest(dist.svg))
 });
 
+gulp.task('data', function() {
+    gulp.src(src.data)
+        .pipe(gulp.dest(dist.data))
+});
+
 //Images aren't included here as even a few can easily impact performance
 gulp.task('watch', function() {
     gulp.watch(src.css + '**', ['styles']);
@@ -143,6 +150,8 @@ gulp.task('watch', function() {
     gulp.watch(src.sprites, ['sprites']);
 
     gulp.watch(src.svg, ['vectors']);
+
+    gulp.watch(src.data, ['data']);
 })
 
 gulp.task('clean', function() {
