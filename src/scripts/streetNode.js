@@ -3,6 +3,7 @@ class StreetNode{
 	constructor(atX,atY){
 		//super();
 
+		this.name;
 		this.x = atX;
 		this.y = atY;
 		
@@ -20,6 +21,12 @@ class StreetNode{
 		}
 
 	}
+
+	toString(){
+		return this.name;
+	}
+
+	
 
 
 

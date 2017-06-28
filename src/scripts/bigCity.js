@@ -9,6 +9,7 @@ class BigCity extends StreetNode{
 		this.carsTargetpoint = [];
 		this.s = 15;
 
+		
 	}
 
 	draw(){

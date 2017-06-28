@@ -1,7 +1,6 @@
 class Car{
 
 	constructor(){
-
 		//current position = 'relative'
 		this.y;
 		this.x;
@@ -30,7 +29,6 @@ class Car{
 		this.currentStep;
 	
 		this.moveStack = [];
-		
 	}
 
 	move(){
@@ -66,7 +64,7 @@ class Car{
 
 					//move to the next Node 
 					
-					this.startShortMove(this.toNode,this.moveStack.pop());
+					this.startShortMove(this.toNode,this.moveStack.shift());
 
 				}
 
@@ -99,11 +97,20 @@ class Car{
 
 	}
 
+
 	//ooohh ja was ein funktionsname
 	startMoveWithPathfinder(from,to){
-		
+		this.x = from.x;
+		this.y = from.y;
+		var finder = new Pathfinder(from,to);
+		finder.startFinder();
+		if(finder.foundPaths.length>0){
+			this.startMoveWithoutPathfinder(finder.foundPaths[round(random(0,finder.foundPaths.length))]);
+		}
+
 
 	}
+
 
 	startMoveWithoutPathfinder(moveArray){
 		
@@ -113,7 +120,7 @@ class Car{
 		this.moving = true;
 		this.targetNode = moveArray[0];
 		this.moveStack = moveArray;
-		this.startShortMove(this.moveStack.pop(),this.moveStack.pop());
+		this.startShortMove(this.moveStack.shift(),this.moveStack.shift());
 
 	}
 

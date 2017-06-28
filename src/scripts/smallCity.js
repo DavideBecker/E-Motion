@@ -10,7 +10,7 @@ class SmallCity extends StreetNode{
 		this.carsHomepoint = [];
 		this.r = 10;
 		
-
+		
 	}
 
 	draw(){
