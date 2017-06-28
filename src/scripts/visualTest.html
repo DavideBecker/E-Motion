@@ -49,11 +49,12 @@
   	Node1.connectedTo.push(Node2);
   	Node2.connectedTo.push(Node3);
   	Node3.connectedTo.push(Node4);
+  	Node3.connectedTo.push(Node42);  	
   	Node4.connectedTo.push(Node5);
+  	Node42.connectedTo.push(Node5);
+
   	Node5.connectedTo.push(Node6);
   	//Node6.connectedTo.push(Node1);
-  	Node3.connectedTo.push(Node42);
-  	Node42.connectedTo.push(Node5);
 
   	for(var i = 0; i< Nodes.length; i++){
   	Nodes[i].name = i ;
@@ -100,6 +101,7 @@
   		if(abs(Nodes[i].x-mouseX)<20&&abs(Nodes[i].y-mouseY)<20){
 
   		currMoving = Nodes[i];
+  		console.log(currMoving.toString());
   		isCurrMoving = true;
   		}
  	 }
@@ -109,8 +111,9 @@
 
   function mouseDragged(){
   if(isCurrMoving){
-  currMoving.x= mouseX;
-  currMoving.y= mouseY;
+  		currMoving.x= mouseX;
+  		currMoving.y= mouseY;
+ 	
  	}
   }
 
@@ -118,7 +121,7 @@
 
   function mouseReleased(){
   isCurrMoving = false;
-  console.log(currMoving.toString());
+  
   currMoving = null;
 
 

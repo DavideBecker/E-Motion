@@ -105,7 +105,7 @@ class Car{
 		var finder = new Pathfinder(from,to);
 		finder.startFinder();
 		if(finder.foundPaths.length>0){
-			this.startMoveWithoutPathfinder(finder.foundPaths[round(random(0,finder.foundPaths.length))]);
+			this.startMoveWithoutPathfinder(finder.foundPaths[round(random(0,finder.foundPaths.length-1))]);
 		}
 
 
