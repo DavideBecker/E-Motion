@@ -160,5 +160,5 @@ gulp.task('clean', function() {
 })
 
 gulp.task('default', function() {
-    sequence('clean', ['styles', 'scripts', 'images', 'vectors']);
+    sequence('clean', ['styles', 'scripts', 'images', 'vectors', 'data']);
 })
