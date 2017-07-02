@@ -59,7 +59,7 @@ module.exports = {
             "error",
             {
                 "properties": "never",
-                "exceptions": ["x", "y", "w", "h", "i", "c"]
+                "exceptions": ["x", "y", "w", "h", "i", "j", "c"]
             }
         ],
         "id-match": "error",
@@ -106,7 +106,7 @@ module.exports = {
         "no-alert": "error",
         "no-array-constructor": "error",
         "no-await-in-loop": "error",
-        "no-bitwise": "error",
+        "no-bitwise": 0,
         "no-caller": "error",
         "no-catch-shadow": "error",
         "no-confusing-arrow": "error",
@@ -146,7 +146,7 @@ module.exports = {
         "no-multi-str": "error",
         "no-multiple-empty-lines": "error",
         "no-native-reassign": "error",
-        "no-negated-condition": "error",
+        "no-negated-condition": 0,
         "no-negated-in-lhs": "error",
         "no-nested-ternary": "error",
         "no-new": "error",
