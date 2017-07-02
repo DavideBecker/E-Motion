@@ -1,0 +1,9 @@
+@font-face {
+  font-family: 'MyWebFont';
+  src: url('poppins.eot'); /* IE9 Compat Modes */
+  src: url('poppins.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('poppins.woff2') format('woff2'), /* Super Modern Browsers */
+       url('poppins.woff') format('woff'), /* Pretty Modern Browsers */
+       url('poppins.ttf')  format('truetype'), /* Safari, Android, iOS */
+       url('poppins.svg#svgFontName') format('svg'); /* Legacy iOS */
+}
