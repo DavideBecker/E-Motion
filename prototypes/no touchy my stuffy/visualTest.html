@@ -1,0 +1,132 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script language="javascript" type="text/javascript" src="vendor/p5.min.js"></script> 
+  <script src="/car.js"></script>
+  <script src="/streetNode.js"></script>
+  <script src="/smallCity.js"></script>
+  <script src="/bigCity.js"></script>
+  <script src="/pathFinder.js"></script>
+  <script src="/converter.js"></script>
+  <script src="assets/js/vendor/cycle.js"></script>
+  <srcipt src="assets/data/nodes.js"></srcipt>
+  <script >
+  
+  var Nodes =[];
+  
+  var testCar;
+
+  function setup(){
+  	createCanvas(windowWidth,windowHeight);
+
+  	testCar = new Car();
+
+  	fill(240);
+  	stroke(230);
+
+
+  	console.log("der converter hats nicht gekillt");
+
+  	for(var i = 0; i< Nodes.length; i++){
+  	Nodes[i].name = i ;
+  	}
+
+  	//Node.connectedTo.push(Node);
+
+  
+  	testCar.r = 20;
+
+  	//testCar.startMoveWithoutPathfinder([Node[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5]],Nodes[0]);
+  }
+
+  function draw(){
+
+  	background(200)
+  	
+  	fill(240);
+  	stroke(230);
+
+  	for ( var i = 0; i<Nodes.length; i++){
+  			
+  			fill(240);
+  			stroke(230);
+
+  			Nodes[i].draw();
+  		
+  			Nodes[i].drawStreets();
+  		
+  	}
+  	
+  	fill(200,200,100);
+
+  	testCar.move();
+  	ellipse(testCar.x,testCar.y,testCar.r,testCar.r);
+
+  }
+
+  var currMoving;
+  var isCurrMoving = false;
+
+  function mousePressed(){
+  for(var i = 0; i< Nodes.length;i++){
+  		if(abs(Nodes[i].x-mouseX)<20&&abs(Nodes[i].y-mouseY)<20){
+
+  		currMoving = Nodes[i];
+  		console.log(currMoving.toString());
+  		isCurrMoving = true;
+  		}
+ 	 }
+
+  }
+  
+
+  function mouseDragged(){
+  if(isCurrMoving){
+  		currMoving.x= mouseX;
+  		currMoving.y= mouseY;
+ 	
+ 	}
+  }
+
+
+
+  function mouseReleased(){
+  isCurrMoving = false;
+  
+  currMoving = null;
+
+
+
+  //testCar.startMoveWithoutPathfinder([Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5],Nodes[0],Nodes[1],Nodes[2],Nodes[3],Nodes[4],Nodes[5]]);
+  
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </script>
+  
+
+
+  <!-- this line removes any default padding and style. you might only need one of these values set. -->
+  <style> body {padding: 0; margin: 0;} </style>
+</head>
+
+<body>	
+</body>
+</html>

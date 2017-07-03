@@ -6,7 +6,7 @@ var environment = {
     timeline: 0,
     daytime: 0,
     daytimeSteps: 0.001,
-    scale: 1.65
+    scale: 1
 }
 
 class Animation {
@@ -100,13 +100,23 @@ function renderMap() {
             var connectedNode = nodes[node.connectedTo[connectionIndex]];
 
             stroke(196);
-            strokeWeight(3)
+            strokeWeight(1)
             line(node.x * environment.scale, node.y * environment.scale, connectedNode.x * environment.scale, connectedNode.y * environment.scale);
         }
 
+        // fill(51)
+        // ellipse(node.x * environment.scale, node.y * environment.scale, 10, 10);
+    }
+
+    for(var nodeIndex in nodes) {
+        var node = nodes[nodeIndex];
+
+        // stroke(51);
+        // text(node.x + '\n' + node.y, node.x, node.y);
         fill(51)
         ellipse(node.x * environment.scale, node.y * environment.scale, 10, 10);
     }
+
 
     for(var townsIndex = 0; townsIndex < towns.length; townsIndex++) {
         var town = towns[townsIndex];
@@ -117,55 +127,55 @@ function renderMap() {
 }
 
 function setup() {
-    // rectMode(CENTER);
-    // createCanvas(windowWidth - $('#sidebar').width(), windowHeight - 3);
+    rectMode(CENTER);
+    createCanvas(windowWidth /*- $('#sidebar').width() */, windowHeight - 3);
 
-    // // strokeWeight(2);
+    // strokeWeight(2);
 
-    // // for(var streetsIndex = 0; streetsIndex < streets.length; streetsIndex++) {
-    // //     var c = streets[streetsIndex];
+    // for(var streetsIndex = 0; streetsIndex < streets.length; streetsIndex++) {
+    //     var c = streets[streetsIndex];
 
-    // //     line(c.x1 * environment.scale, c.y1 * environment.scale, c.x2 * environment.scale, c.y2 * environment.scale);
-    // // }
+    //     line(c.x1 * environment.scale, c.y1 * environment.scale, c.x2 * environment.scale, c.y2 * environment.scale);
+    // }
 
-    // // for(var citiesIndex = 0; citiesIndex < cities.length; citiesIndex++) {
-    // //     var city = cities[citiesIndex];
+    // for(var citiesIndex = 0; citiesIndex < cities.length; citiesIndex++) {
+    //     var city = cities[citiesIndex];
 
-    // //     rect(city.x * environment.scale, city.y * environment.scale, city.w * 4, city.w * 4);
-    // // }
+    //     rect(city.x * environment.scale, city.y * environment.scale, city.w * 4, city.w * 4);
+    // }
 
-    // startNode = nodes['256062347'];
-    // targetNode = nodes[startNode.connectedTo[floor(random(0, startNode.connectedTo.length - 1))]];
+    startNode = nodes['256062347'];
+    targetNode = nodes[startNode.connectedTo[floor(random(0, startNode.connectedTo.length - 1))]];
 
-    // // var startNode = nodes[floor(0, nodes.length - 1)];
+    // var startNode = nodes[floor(0, nodes.length - 1)];
 
-    // // ellipse(startNode.x, startNode.y, 20, 20);
+    // ellipse(startNode.x, startNode.y, 20, 20);
 
 
-    // // for(var vertical = 0; vertical < width / 30; vertical++) {
-    // //     line(vertical * 30, 0, vertical * 30, height)
-    // // }
+    // for(var vertical = 0; vertical < width / 30; vertical++) {
+    //     line(vertical * 30, 0, vertical * 30, height)
+    // }
 
-    // // for(var horizontal = 0; horizontal < height / 30; horizontal++) {
-    // //     line(0, horizontal * 30, width, horizontal * 30)
-    // // }
+    // for(var horizontal = 0; horizontal < height / 30; horizontal++) {
+    //     line(0, horizontal * 30, width, horizontal * 30)
+    // }
 
-    // renderMap();
+    renderMap();
 
-    // anim = new Animation(function(step) {
-    //     var progressX = (targetNode.x - startNode.x) * step
-    //     var progressY = (targetNode.y - startNode.y) * step
+    anim = new Animation(function(step) {
+        var progressX = (targetNode.x - startNode.x) * step
+        var progressY = (targetNode.y - startNode.y) * step
 
-    //     // console.log(targetNode.x, startNode.x, step)
+        // console.log(targetNode.x, startNode.x, step)
 
-    //     rect((startNode.x + progressX) * environment.scale, (startNode.y + progressY) * environment.scale, 15, 15);
-    // }, 500, 'ease', function(ani) {
-    //     startNode = nodes[targetNode.id];
-    //     targetNode = nodes[startNode.connectedTo[floor(random(0, startNode.connectedTo.length - 1))]];
-    //     ani.restart();
-    // })
+        rect((startNode.x + progressX) * environment.scale, (startNode.y + progressY) * environment.scale, 15, 15);
+    }, 500, 'ease', function(ani) {
+        startNode = nodes[targetNode.id];
+        targetNode = nodes[startNode.connectedTo[floor(random(0, startNode.connectedTo.length - 1))]];
+        ani.restart();
+    })
 
-    // anim.isRunning = true;
+    anim.isRunning = true;
 }
 
 console.log(nodes);
@@ -178,10 +188,90 @@ function draw() {
     anim.animate();
 }
 
+function mousePressed(){
+    for(var nodeIndex in nodes){
+        if(dist(mouseX,mouseY,nodes[nodeIndex].x,nodes[nodeIndex].y)<5){
+            console.log(nodeIndex);
+        }
+
+    }
+
+}
 
 $(document).ready(function() {
-    $('#toggle-button').click((e) => {
+    $('#sidebar-toggle').click((e) => {
         e.preventDefault()
         $('body').toggleClass('nav-active');
     })
+
+
 })
+
+
+
+/* exeeds callstack size :(
+class Pathfinder{
+    constructor(startNode,targetNode){
+
+        this.start=startNode;
+        this.target=targetNode;
+
+        this.foundPaths = [];
+    }
+
+    startFinder(){
+        this.foundPaths = [];
+        this.goDeeper([],this.start);
+
+        for(var i in nodes){
+            nodes[i].visited = false;
+        }
+        
+        console.log(this.foundPaths.toString());        
+    }
+
+    goDeeper(pathSoFar,current,count){
+        this.val = count;
+
+        
+        pathSoFar.push(current);
+
+        if(this.val>5){
+            return;
+        } 
+
+
+        //console.log(current);
+        if(current == this.target){
+
+            //console.log(pathSoFar.toString());
+            this.foundPaths.push(concat([],pathSoFar)); 
+            
+        }
+        else{
+
+                for(var i = 0; i < current.connectedTo.length;i++){
+                    
+                    this.visited = true;
+                    
+
+
+                    //console.log(nodes[current.connectedTo[i]].visited);
+                    
+
+                    if(nodes[current.connectedTo[i]].visited!=true){  
+                        this.goDeeper(pathSoFar,nodes[current.connectedTo[i]],this.val++);
+                        console.log("go deeper into"+ current.connectedTo[i]);
+                    }    
+
+                }
+                this.visited = false;
+    
+        }
+        pathSoFar.pop();
+    
+    }
+
+
+}
+*/
