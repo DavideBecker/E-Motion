@@ -37,19 +37,19 @@
             <span class="label">Anzahl der mobilen Ladetrucks</span>
             <div class="param numbers">
                 <div class="subtract"></div><!--
-                --><input class="amount" type="number" min="0" max="50" value="8"><!--
+                --><input id="truckAmount" class="amount" type="number" min="0" max="50" value="8"><!--
                 --><div class="add"></div>
             </div>
         </div>
 
         <div class="data-group">
             <span tooltip="Wie viele Stunden die Trucks jeden Tag unterwegs sind" class="label">Betriebszeit der Trucks</span>
-            <input class="param draggable unit-hours" min="0" max="24" value="7" type="range">
+            <input id="truckUptime" class="param draggable unit-hours" min="0" max="24" value="7" type="range">
         </div>
 
         <div class="data-group">
             <span tooltip="Wie viel % des Akkus die Tanker aufladen" class="label">Ladelimit der Autos</span>
-            <input class="param draggable unit-percent" min="0" max="100" value="25" type="range">
+            <input id="carChargeLimit" class="param draggable unit-percent" min="0" max="100" value="25" type="range">
         </div>
 
         <h1>Trucks</h1>

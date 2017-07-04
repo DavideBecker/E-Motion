@@ -9,9 +9,9 @@ var environment = {
     scale: 1.6,
 
     simulation: {
-        trucks: 6,
-        cars: 10,
+        truckAmount: 6,
         truckUptime: 6, // In h
+        carAmount: 10,
         carChargeLimit: 25 // In %
     }
 }
@@ -71,12 +71,12 @@ function renderMap(sketch) {
 
             // stroke(51);
             // text(node.x + '\n' + node.y, node.x, node.y);
-            sketch.fill(51)
-            sketch.ellipse(node.x * environment.scale, node.y * environment.scale, 10, 10);
+            // sketch.fill(51)
+            // sketch.ellipse(node.x * environment.scale, node.y * environment.scale, 10, 10);
 
             if(node.isTown) {
                 sketch.fill(200, 0, 0);
-                sketch.ellipse(node.x * environment.scale, node.y * environment.scale, 20, 20);
+                sketch.ellipse(node.x * environment.scale, node.y * environment.scale, 14, 14);
             }
         }
     }
@@ -149,9 +149,7 @@ function mousePressed(){
         if(dist(mouseX,mouseY,nodes[nodeIndex].x,nodes[nodeIndex].y)<5){
             console.log(nodeIndex);
         }
-
     }
-
 }
 
 $(document).ready(function() {
@@ -175,6 +173,8 @@ $(document).ready(function() {
         if(val > 0) {
             $input.val(val - 1)
         }
+
+        $input.trigger('change')
     })
 
     $('.param.numbers .amount').change(function() {
@@ -201,9 +201,28 @@ $(document).ready(function() {
         } else {
             $input.val(max)
         }
+
+        $input.trigger('change')
+    })
+
+    $('#truckAmount').change(function() {
+        console.log('truckAmount changed')
+
+        environment.simulation.truckAmount = Number($(this).val())
+    })
+
+    $('#truckUptime').change(function() {
+        console.log('truckUptime changed')
+
+        environment.simulation.truckUptime = Number($(this).val())
+    })
+
+    $('#carChargeLimit').change(function() {
+        console.log('carChargeLimit changed')
+
+        environment.simulation.carChargeLimit = Number($(this).val())
     })
 })
-
 
 
 /* exeeds callstack size :(
