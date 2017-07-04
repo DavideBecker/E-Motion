@@ -1,96 +1,325 @@
 @import 'vendor/reset.min'
 @import 'partials/fonts'
 
+$sidebarWidth: 350px
+$mainGreen: #27AE60
+$darkGreen: darken($mainGreen, 10%)
+$glowBackground: #B6C0CC
+
 =animation($timing)
     transition: all $timing cubic-bezier(0.68, -0.55, 0.265, 1.55)
 
+=shadow($spread, $color)
+    box-shadow: 0px 1px $spread $color
+
+=glow($spread, $color)
+    background: $glowBackground
+    +shadow($spread, $color)
+
 *
     box-sizing: border-box
+
+html *
+    font-family: "Fira Sans", monospace
 
 html, body, #sidebar
     height: 100%
 
 .nav-active
-    padding-left: 300px
+    padding-left: 400px
 
     #sidebar
         left: -50px
 
     #sidebar-toggle
         left: -50px
+        +animation(600ms)
+
+        #toggle-button:after
+            transform: rotate(180deg)
 
 body
     +animation(500ms)
 
+#canvas-wrapper
+    position: relative
+
+    canvas
+        position: absolute
+
 #sidebar
-    max-width: 350px
+    max-width: $sidebarWidth + 50px
     width: 100%
     height: 100%
-    padding-top: 80px
-    padding-left: 50px
-    background: #333333
+    padding-top: 90px
+    background: #363D45
     position: fixed
-    left: -350px
+    left: -$sidebarWidth - 50px
+    // left: -50px
     +animation(500ms)
+    color: #A5B1BD
+    overflow-y: scroll
+
+    h1
+        color: #FFF
+        padding: 15px 15px 15px 65px
+        text-transform: uppercase
+        font-weight: 200
+        letter-spacing: .1em
+        background-color: #22272D
 
 #sidebar-toggle
-    max-width: 400px
+    max-width: $sidebarWidth + 100px
     width: 100%
     height: 50px
     position: fixed
     top: 20px
-    background-color: #F00
-    left: -350px
+    left: -$sidebarWidth - 50px
+    // left: -50px
     z-index: 999
-    padding-left: 50px
-    +animation(500ms)
+    +animation(400ms)
+    cursor: pointer
+
+    &:hover #toggle-button
+        background-color: $darkGreen//#666
     
     #project-title
         float: left
-        max-width: 300px
+        max-width: $sidebarWidth + 50
         width: 100%
         height: 50px
         line-height: 50px
-        font-size: 40px
+        font-size: 32px
+        font-weight: 100
         text-align: center
+        color: #FFF
+        padding-left: 50px
+        background-color: $mainGreen//#29C7CA
+        border-bottom: 2px solid $darkGreen//#2BACB1
 
     #toggle-button
-        background-color: #090
+        background-color: $mainGreen//#333
         width: 50px
         height: 50px
+        border-bottom: 2px solid $darkGreen//#000
+        border-right: 2px solid $darkGreen//#000
         float: left
         transition: all 250ms ease
+        text-decoration: none
+        border-radius: 0 10px 10px 0
+
+        &:after
+            content: "⇨"
+            text-align: center
+            display: block
+            width: 50px
+            height: 50px
+            line-height: 50px
+            transform: rotate(0)
+            color: #FFF
+            +animation(500ms)
 
         &:hover
-            background-color: #0F0
+            // background-color: $darkGreen//#666
+            // border-color: #5A5A5A
 
 .data-group
-    padding: 20px 10px
+    padding: 20px 20px 20px 70px
 
-.bar
-    width: 100%
-    height: 5px
-    background-color: #CCC
+.label
+    font-weight: 300
+    font-size: 13px
 
-    .progress
-        height: 5px
-        background: #F00
+    &[tooltip]
+        position: relative
+
+        &:after
+            content: " [?]"
+            color: $mainGreen
+            cursor: help
+
+        &:hover:before
+            content: attr(tooltip)
+            position: absolute
+            left: 0
+            max-width: 300px
+            width: 100%
+            background-color: $mainGreen
+            padding: 10px
+            color: #FFF
+            z-index: 9999
+            top: 20px
+            line-height: 16px
+
+.progress-bar
+    overflow: hidden
+    padding: 14px
+
+    .amount
+        float: right
+        font-size: 18px
+        font-weight: 100
+
+    .bar
+        width: 100%
+        height: 2px
+        border-top: 1px solid #476283
+        background-color: #506B8A
+        float: left
+        margin: 8px 0 4px
+
+        .progress
+            height: 2px
+            border-top: 1px solid #86A3BA
+            position: relative
+            top: -1px
+            +glow(10px, #FFF)
 
 .static-value
     display: inline-block
-    float: left
-    width: 25%
+    width: 46%
+    margin: 2%
+    padding: 20px 5px
+    background-color: darken(#363D45, 5%)
+    height: 110px
+    vertical-align: top
     text-align: center
-    padding: 10px 0
-    background: #999
 
-    .icon
-        display: block
-        margin: 0 auto
-        width: 42px
-        height: 42px
-        background-color: #F00
+    // &:nth-child(-n+3)
+    //     border-top: 2px solid desaturate(#22272D, 50%)
+
+    // &:nth-child(4n), &:first-child
+    //     border-left: 2px solid desaturate(#22272D, 50%)
+
+    .amount
+        font-weight: 100
+        font-size: 32px
+
+    .unit
+        font-weight: 100
+        font-size: 16px
 
     .label
-        display: inline-block
-        padding: 12px 10px 0
+        font-weight: 300
+        display: block
+        margin: 12px 5px 0
+        font-size: 13px
+        line-height: 17px
+
+        &.top
+            padding: 0 5px 12px
+    
+    .icon
+        width: 34px
+        height: 34px
+        display: block
+        background-color: #F00
+        margin: 12px auto
+
+        &.top
+            margin: 0 auto 12px
+
+
+.param
+    &.numbers
+        display: flex
+        +shadow(10px, $mainGreen)
+        width: 60%
+        margin: 10px 0 0 0
+
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button
+            -webkit-appearance: none
+            margin: 0
+
+        .subtract, .add
+            height: 0
+
+            &:before
+                display: inline-block
+                background-color: $mainGreen
+                min-width: 42px
+                flex-basis: 42px
+                height: 42px
+                text-align: center
+                line-height: 42px
+                color: #FFF
+
+            &:hover:before
+                background-color: $darkGreen
+                cursor: pointer
+
+        .subtract
+            &:before
+                content: "-"
+
+        .amount
+            height: 42px
+            border: none
+            display: inline-block
+            vertical-align: top
+            padding: 8px 10px
+            flex-basis: 100%
+            text-align: center
+            font-size: 36px
+            color: #FFF
+            background-color: darken(#363D45, 5%)
+        
+            &:focus
+                outline: none
+
+        .add
+            &:before
+                content: "+"
+
+
+    &.draggable
+        -webkit-appearance: none
+        width: 80%
+        background: transparent
+        border-bottom: 1px solid #FFF
+        position: relative
+        height: 1px
+        margin: 20px 0 0 0
+
+        &.unit-percent:after
+            content: attr(data-value) "%"
+
+        &.unit-hours:after
+            content: attr(data-value) "h"
+
+        &::-webkit-slider-thumb
+            -webkit-appearance: none
+            width: 21px
+            height: 21px
+            border-radius: 100%
+            background-color: $mainGreen
+            +shadow(10px, $mainGreen)
+
+        &:before
+            width: 0
+            height: 0
+            display: block
+            content: ""
+            border-top: 12px solid transparent
+            border-bottom: 12px solid transparent
+            border-right: 12px solid $glowBackground
+            position: absolute
+            top: -12px
+            right: -7%
+
+        &:after
+            width: 15%
+            background-color: $glowBackground
+            display: block
+            right: -20%
+            content: attr(data-value)
+            color: #333
+            text-align: center
+            height: 24px
+            line-height: 26px
+            font-size: 14px
+            position: absolute
+            top: -12px
+        
+        &:focus
+            outline: none

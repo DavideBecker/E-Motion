@@ -37,7 +37,7 @@ class SvgParser {
 
 var parser = new SvgParser();
 
-var svg = fs.readFileSync('prototypes/map.svg').toString();
+var svg = fs.readFileSync('prototypes/finalMap.svg').toString();
 
 var streets = parser.match(svg).withPattern(linesExpression).format(function(result) {
     return {
@@ -198,12 +198,26 @@ for(var i in streets) {
 }
 
 var graph = {}
+var townIDs = [];
 
 //Generate graph
 for(var id in nodes) {
     var node = nodes[id];
 
     graph[node.id] = {}
+
+    for(var i in towns) {
+        var town = towns[i];
+
+        if(dist(node.x, node.y, town.x, town.y) <= 1) {
+            node.isTown = true
+            townIDs.push(node.id)
+        }
+    }
+
+    if(!node.isTown) {
+        node.isTown = false
+    }
 
     for(var i = 0; i < node.connectedTo.length; i++) {
         var targetNode = nodes[node.connectedTo[i]];
@@ -243,13 +257,15 @@ var data = {
     cities: cities
 }
 
+console.log(data.towns)
+
 fs.writeFile('src/data/locations.js', 'var locations = ' + JSON.stringify(data), (err) => {
     if(err) {
         console.log(err);
     }
 });
 
-fs.writeFile('src/data/nodes.js', 'var rawNodes = ' + JSON.stringify(cycle.decycle(nodes)), (err) => {
+fs.writeFile('src/data/nodes.js', 'var nodes = ' + JSON.stringify(nodes) + ';var townIDs=' + JSON.stringify(townIDs), (err) => {
     if(err) {
         console.log(err);
     }

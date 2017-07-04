@@ -5,15 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+    <!--<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>-->
     <!--<script src='https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/vivus/0.4.1/vivus.min.js'></script>-->
+    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
     <script src="assets/js/vendor/p5.min.js"></script>
     <script src="assets/js/vendor/cycle.js"></script>
-    <script src="assets/js/graph.js"></script>
     <script src="assets/js/vendor/graph.js"></script>
     <script src="assets/js/vendor/bezier.js"></script>
-    <script src="assets/js/vendor/jquery.min.js"></script>
+    <script src="assets/js/vendor/jquery.js"></script>
+    <script>if (window.module) module = window.module;</script>
     <script src="assets/data/nodes.js"></script>
     <script src="assets/data/nodeGraph.js"></script>
     <script src="assets/data/locations.js"></script>
@@ -31,29 +32,57 @@
         <a href="#" id="toggle-button"></a>
     </div>
     <div id="sidebar">
+        <h1>Einstellungen</h1>
         <div class="data-group">
-            <div class="bar with-label">
-                <div class="progress" style="width: 50%"></div>
+            <span class="label">Anzahl der mobilen Ladetrucks</span>
+            <div class="param numbers">
+                <div class="subtract"></div><!--
+                --><input class="amount" type="number" min="0" max="50" value="8"><!--
+                --><div class="add"></div>
             </div>
-            <div class="bar-label">50%</div>
+        </div>
+
+        <div class="data-group">
+            <span tooltip="Wie viele Stunden die Trucks jeden Tag unterwegs sind" class="label">Betriebszeit der Trucks</span>
+            <input class="param draggable unit-hours" min="0" max="24" value="7" type="range">
+        </div>
+
+        <div class="data-group">
+            <span tooltip="Wie viel % des Akkus die Tanker aufladen" class="label">Ladelimit der Autos</span>
+            <input class="param draggable unit-percent" min="0" max="100" value="25" type="range">
+        </div>
+
+        <h1>Trucks</h1>
+        <div class="data-group">
             <div class="static-value">
-                <span class="icon"></span>
-                <span class="label">25%</span>
+                <span class="amount">423</span>
+                <span class="label" tooltip="So viele Autos können durch die Trucks jeden Tag aufgeladen werden">Autos, die pro Tag geladen werden</span>
+            </div><!--
+            --><div class="static-value">
+                <span class="amount">20:51:01</span>
+                <span class="label" tooltip="So viele Autos können durch die Trucks jeden Tag aufgeladen werden">bis ein Truck selbst laden muss</span>
+            </div><!--
+            --><div class="progress-bar">
+                <span class="label">Aktuelle durchschnittliche Ladung</span>
+                <span class="amount">50%</span>
+                <div class="bar">
+                    <div class="progress" style="width: 50%"></div>
+                </div>
             </div>
-            <div class="static-value">
-                <span class="icon"></span>
-                <span class="label">25%</span>
-            </div>
-            <div class="static-value">
-                <span class="icon"></span>
-                <span class="label">25%</span>
-            </div>
-            <div class="static-value">
-                <span class="icon"></span>
-                <span class="label">25%</span>
+        </div>
+
+        <h1>Autos</h1>
+        <div class="data-group">
+            <div class="progress-bar">
+                <span class="label">Aktuelle durchschnittliche Ladung</span>
+                <span class="amount">50%</span>
+                <div class="bar">
+                    <div class="progress" style="width: 50%"></div>
+                </div>
             </div>
         </div>
     </div>
+    <div id="canvas-wrapper"></div>
 </body>
 
 </html>
