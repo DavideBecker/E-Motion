@@ -1,6 +1,8 @@
 var streets = locations.streets;
 var towns = locations.towns;
 var cities = locations.cities;
+var allCars = [];
+var allKeys = Object.keys(nodes);
 
 var environment = {
     timeline: 0,
@@ -21,6 +23,14 @@ var environment = {
 // })
 
 var graph = new Graph(nodeGraph);
+
+graph.findCoolerPath = function(from,to){
+    var umwegnode1 = allKeys[floor(random(0,allKeys.length))]
+    var umwegnode2 = allKeys[floor(random(0,allKeys.length))]
+    
+    return graph.findShortestPath(from,umwegnode1).concat(graph.findShortestPath(umwegnode1,to));
+}
+	
 
 // console.log(graph.findShortestPath('4341680', '152748987'))
 
@@ -88,62 +98,183 @@ function setup() {
     rectMode(CENTER);
     createCanvas(windowWidth /*- $('#sidebar').width() */, windowHeight - 3);
 
-    // strokeWeight(2);
-
-    // for(var streetsIndex = 0; streetsIndex < streets.length; streetsIndex++) {
-    //     var c = streets[streetsIndex];
-
-    //     line(c.x1 * environment.scale, c.y1 * environment.scale, c.x2 * environment.scale, c.y2 * environment.scale);
-    // }
-
-    // for(var citiesIndex = 0; citiesIndex < cities.length; citiesIndex++) {
-    //     var city = cities[citiesIndex];
-
-    //     rect(city.x * environment.scale, city.y * environment.scale, city.w * 4, city.w * 4);
-    // }
-
-    // var startNode = nodes[floor(0, nodes.length - 1)];
-
-    // ellipse(startNode.x, startNode.y, 20, 20);
-
-
-    // for(var vertical = 0; vertical < width / 30; vertical++) {
-    //     line(vertical * 30, 0, vertical * 30, height)
-    // }
-
-    // for(var horizontal = 0; horizontal < height / 30; horizontal++) {
-    //     line(0, horizontal * 30, width, horizontal * 30)
-    // }
-
-    // for(var citiesIndex = 0; citiesIndex < cities.length; citiesIndex++) {
-    //     var city = cities[citiesIndex];
-
-    //     rect(city.x * environment.scale, city.y * environment.scale, city.w * 4, city.w * 4);
-    // }
-
-    // var startNode = nodes[floor(0, nodes.length - 1)];
-
-    // ellipse(startNode.x, startNode.y, 20, 20);
-
-
-    // for(var vertical = 0; vertical < width / 30; vertical++) {
-    //     line(vertical * 30, 0, vertical * 30, height)
-    // }
-
-    // for(var horizontal = 0; horizontal < height / 30; horizontal++) {
-    //     line(0, horizontal * 30, width, horizontal * 30)
-    // }
 }
 
 console.log(nodes);
 
+
+
+
+
+
+
+
+
+class Car{
+    constructor(){
+        this.targetNode;
+        this.fromNode;
+        this.energy;
+        this.milage;
+        this.currNode;
+    
+        this.currPos={
+            x:0,
+            y:0
+        }
+
+
+        //aus meinem alten Auto
+        this.moving = false;
+        this.moveDir = createVector(0,0);
+        this.currentStep;
+        this.stepsNeeded;
+        this.speed = 1; 
+
+
+        this.image;
+        this.moveStack = [];
+
+        }
+
+    draw(){
+        
+        if(this.moving){
+
+            // rectMode(CENTER);
+            // rect(0,0,10,10);
+            // rotate(this.moveDir.heading());
+            // translate(this.currPos.x,this.currPos.y);
+
+            rectMode(CENTER);
+            rect(this.currPos.x*environment.scale, this.currPos.y*environment.scale, 10,10);
+        // /*
+        // image(this.image,this.currPos.x,this.currPos.y);
+        // */
+        }
+    }   
+
+    move(){
+        if(this.moving){
+
+
+            //move first, think later
+            //console.log("moved from "+this.currPos.x+" "+this.currPos.y+" to: "+this.currPos.x+this.moveDir.x+" "+this.currPos.y+this.moveDir.y)
+            this.currPos.x+=this.moveDir.x;
+            this.currPos.y+=this.moveDir.y;
+            this.currentStep++;
+
+            //check if it reached a Node;
+            if(this.stepsNeeded-1<this.currentStep){
+
+                //check if its not the targetNode
+                if(this.moveStack.length<1){
+
+                    //if it reached it targetNode
+                    //stop Moving and get on the exact position of the Node
+                    //to hide behind it
+                    //console.log("the car reached the target");
+                    
+                    this.moving = false;
+                    this.currPos.x = this.toNode.x;
+                    this.currPos.y = this.toNode.y;
+                    
+                    //this.startMoveWithoutPathfinder(graph.findShortestPath(this.toNode.id,allKeys[floor(random(0,allKeys.length-1))]));
+                    
+                }
+                
+                else{
+
+
+                    //move to the next Node 
+                    
+                    this.startShortMove(this.toNode.id,this.moveStack.shift());
+
+                }
+
+            }
+
+        }
+
+    }   
+
+
+
+    startShortMove(from,to){
+
+
+        this.currPos.x = nodes[from].x;
+        this.currPos.y = nodes[from].y;
+        this.moveDir.set(nodes[to].x-nodes[from].x,nodes[to].y-nodes[from].y);
+        var steps = dist(nodes[from].x,nodes[from].y,nodes[to].x,nodes[to].y);
+        
+        //console.log("this car will take "+round(steps)+" frames to move between the nodes");
+        
+        //sets values
+        this.toNode = nodes[to];
+        this.stepsNeeded = round(steps)/this.speed;
+        this.currentStep = 0;
+        this.moveDir.div(round(steps));
+        this.moveDir.mult(this.speed);  
+
+        console.log(this.moveStack);
+
+
+
+    }
+
+
+    startMoveWithoutPathfinder(moveArray){
+        
+        this.currPos.x = nodes[moveArray[moveArray.length-1]].x;
+        this.currPos.y = nodes[moveArray[moveArray.length-1]].y;
+
+        this.moving = true;
+        this.targetNode = moveArray[0];
+        this.moveStack = moveArray;
+        this.startShortMove(this.moveStack.shift(),this.moveStack.shift());
+
+    }
+
+    
+
+}
+
+
+
+
+
+
+var SpawnCount = 0;
 function draw() {
     background(255);
     fill(51)
-    // renderMap();
+    
     fill(50, 200, 0)
-}
+    //anim.animate();
+    SpawnCount++;
 
+    for(var i = 0; i < allCars.length; i++){
+        
+        allCars[i].move();
+        allCars[i].draw();
+    }   
+    
+    if(SpawnCount%5 == 0){
+        if(allCars.length>300){
+            allCars.shift();
+        }
+        allCars[allCars.length] = new Car();
+        // allCars[allCars.length-1].startMoveWithoutPathfinder(graph.findShortestPath(46207908,4341680));
+         allCars[allCars.length-1].startMoveWithoutPathfinder(graph.findCoolerPath(46207908,4341680));
+    }
+
+    
+    //testCar.move();
+    //testCar.draw();
+    
+
+}
 function mousePressed(){
     for(var nodeIndex in nodes){
         if(dist(mouseX,mouseY,nodes[nodeIndex].x,nodes[nodeIndex].y)<5){
@@ -223,71 +354,3 @@ $(document).ready(function() {
         environment.simulation.carChargeLimit = Number($(this).val())
     })
 })
-
-
-/* exeeds callstack size :(
-class Pathfinder{
-    constructor(startNode,targetNode){
-
-        this.start=startNode;
-        this.target=targetNode;
-
-        this.foundPaths = [];
-    }
-
-    startFinder(){
-        this.foundPaths = [];
-        this.goDeeper([],this.start);
-
-        for(var i in nodes){
-            nodes[i].visited = false;
-        }
-        
-        console.log(this.foundPaths.toString());        
-    }
-
-    goDeeper(pathSoFar,current,count){
-        this.val = count;
-
-        
-        pathSoFar.push(current);
-
-        if(this.val>5){
-            return;
-        } 
-
-
-        //console.log(current);
-        if(current == this.target){
-
-            //console.log(pathSoFar.toString());
-            this.foundPaths.push(concat([],pathSoFar)); 
-            
-        }
-        else{
-
-                for(var i = 0; i < current.connectedTo.length;i++){
-                    
-                    this.visited = true;
-                    
-
-
-                    //console.log(nodes[current.connectedTo[i]].visited);
-                    
-
-                    if(nodes[current.connectedTo[i]].visited!=true){  
-                        this.goDeeper(pathSoFar,nodes[current.connectedTo[i]],this.val++);
-                        console.log("go deeper into"+ current.connectedTo[i]);
-                    }    
-
-                }
-                this.visited = false;
-    
-        }
-        pathSoFar.pop();
-    
-    }
-
-
-}
-*/
