@@ -1,4 +1,4 @@
-# EMotion
+# e-motion
 
 ## Development setup
 
