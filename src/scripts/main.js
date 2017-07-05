@@ -10,6 +10,8 @@ var allCities = [];
 var allCitieNames = [];
 var stuttgart;
 
+var allEmotions = [];
+
 
 
 var environment = {
@@ -23,6 +25,7 @@ var environment = {
         truckUptime: 6, // h
         carAmount: 10,
         carChargeLimit: 0.25, // %
+        averageCarCharge: 0.5,
 
         static: {
             truck: {
@@ -306,38 +309,45 @@ var staticMap = new p5(renderMap);
 function setup() {
 //frameRate(60);
 
-createCities();
+			createCities();
 
-getBackgroundColor = function(){
-	return map(constrain(environment.daytime,0,100),0,100,79,255);
+			for(var i = 0;i<8;i++){
+				allEmotions[i] = new Emotion(stuttgart);
+			}
+
+			getBackgroundColor = function(){
+				return map(constrain(environment.daytime,0,100),0,100,79,255);
+			}
+
+
+			getStreetColor = function(){
+				return map(constrain(environment.daytime,0,100),0,100,192,69);
+			}
+
+				console.log(environment.simulation.carAmount);
+
+				for(var i = 0 ; i <  environment.simulation.carAmount ; i++){
+					
+					allCars[i]=new Car( allCities[floor(random(0,allCities.length))]);
+					allCars[i].visible = false;
+					allCars[i].hometown.parkedCars.push(allCars[i]);
+					//allCars[i].hometown 
+					console.log(allCars[i].hometown);
+
+					//allCars[i].startMoveWithoutPathfinder(graph.findCoolerPath( allCars[i].hometown.node.id ,  allKeys[floor(random(0,allKeys.length-1))]  ))
+
+				}
+
+
+			    rectMode(CENTER);
+			    var canvas = createCanvas(windowWidth - $('#sidebar').width(), windowHeight - 3);
+			    // frameRate(1)
+			    canvas.parent('canvas-wrapper')
+			    console.log("finished setup");
 }
 
 
-getStreetColor = function(){
-	return map(constrain(environment.daytime,0,100),0,100,192,69);
-}
 
-	console.log(environment.simulation.carAmount);
-
-	for(var i = 0 ; i <  environment.simulation.carAmount ; i++){
-		
-		allCars[i]=new Car( allCities[floor(random(0,allCities.length))]);
-		allCars[i].visible = false;
-		allCars[i].hometown.parkedCars.push(allCars[i]);
-		//allCars[i].hometown 
-		console.log(allCars[i].hometown);
-
-		//allCars[i].startMoveWithoutPathfinder(graph.findCoolerPath( allCars[i].hometown.node.id ,  allKeys[floor(random(0,allKeys.length-1))]  ))
-
-	}
-
-
-    rectMode(CENTER);
-    var canvas = createCanvas(windowWidth - $('#sidebar').width(), windowHeight - 3);
-    // frameRate(1)
-    canvas.parent('canvas-wrapper')
-    console.log("finished setup");
-}
 
 function windowResized() {
     resizeCanvas(windowWidth - $('#sidebar').width(), windowHeight - 3);
@@ -346,8 +356,15 @@ function windowResized() {
 // console.log(nodes);
 
 
+function getAverageCarEnergy(){
+		var ret = 0;
+		for(var i = 0; i<allCars.length;i++		){
+			ret+=allCars[i].energy/allCars[i].maxEnergy;
 
+		}
 
+		return ret/=allCars.length;
+}
 
 
 
@@ -576,10 +593,285 @@ class Car{
 
 
 
+
+
+
+class Emotion{
+
+    constructor(hometown){
+        this.targetNode;
+        this.fromNode;
+        this.maxEnergy = 24;
+        this.energy = 24;
+        this.tempEnergy =24;
+
+        this.color;
+        this.getColor();
+
+        this.milage = 15;
+        this.currNode;
+    	this.hometown = hometown;
+
+
+        this.currPos={
+            x:0,
+            y:0
+        
+        }
+
+        this.currPos.x = this.hometown.node.x;
+        this.currPos.y = this.hometown.node.y;
+        
+
+        //aus meinem alten Auto
+        this.moving = false;
+        this.moveDir = createVector(0,0);
+        this.currentStep;
+        this.stepsNeeded;
+        this.speed = 1; 
+
+        this.stuck = false;
+        this.currCity;
+
+        this.image;
+        this.moveStack = [];
+        this.visible = false;
+        this.isCharging = false;	
+
+		this.milage =22;
+		this.maxEnergy	= 400;
+		this.energy = 400; 
+		this.currentlyCharging  =allCities[0];  	
+		this.chargingCounter = 0;	
+        }
+    getColor(){
+    		
+		var input = constrain(map(this.energy,0,this.maxEnergy,0,200),0,200);
+		var r,g,b;
+		r = map(input,0,100,235,242);
+		g = map(input,0,100,87,153);
+		b = map(input,0,100,87,74);
+
+		if(input>100){
+
+			r = map(input,100,200,242,39);
+			g = map(input,100,200,153,174);
+			b = map(input,100,200,74,96);
+				} 
+
+				var temp=color(r,g,b); 
+			this.color = temp;	
+  		}
+
+
+
+    draw(){
+        
+       if(this.visible){
+   
+            if( round(this.energy/0.25)*0.25!= round(this.tempEnergy/0.25)*0.25){
+           		this.getColor();
+           		this.tempEnergy=this.energy;
+            }
+
+
+            rectMode(CENTER);
+            noStroke()
+            fill(getStreetColor());
+            rect(this.currPos.x*environment.scale, this.currPos.y*environment.scale, 18,18);
+            
+            fill(this.color);
+            rect(this.currPos.x*environment.scale, this.currPos.y*environment.scale, 16,16);
+            
+            fill(getStreetColor()	);
+            rect(this.currPos.x*environment.scale, this.currPos.y*environment.scale, 10,10);
+            
+
+        // /*
+        // image(this.image,this.currPos.x,this.currPos.y);
+        // */
+        }
+    }   
+    goHome(){
+    	this.visible = true;
+    	this.currCity.parkedCars.pop();
+    	this.startMoveWithoutPathfinder(graph.findShortestPath(this.toNode.id,this.hometown.nodeID));
+    }
+    startCharging(){
+    		this.isCharging	= false;
+    		this.visible = true;
+
+    		this.startMoveWithoutPathfinder(graph.findShortestPath(stuttgart.node.id,allCities[floor(random(0,allCities.length))]));
+
+    }
+
+    move(){
+        if(this.moving&&!this.isCharging){
+        	/*
+
+        	if(this.energy < 0 || this.energy > this.maxEnergy){
+        		//this.stuck = true;
+        		this.milage*=-1;
+        	}
+        	*/
+
+
+        	this.energy -= this.milage/500;
+            //move first, think later
+            //console.log("moved from "+this.currPos.x+" "+this.currPos.y+" to: "+this.currPos.x+this.moveDir.x+" "+this.currPos.y+this.moveDir.y)
+            
+ 			if(!this.stuck){
+            this.currPos.x+=this.moveDir.x;
+            this.currPos.y+=this.moveDir.y;
+            this.currentStep++;
+        	}
+            //check if it reached a Node;
+
+           
+            if(this.stepsNeeded-1<this.currentStep){
+
+                //check if its not the targetNode
+                if(this.moveStack.length<1){
+
+                    //if it reached it targetNode
+                    //stop Moving and get on the exact position of the Node
+                    //to hide behind it
+                    //console.log("the car reached the target");
+                   
+                   var inCity = false;
+                   var cityNum = 0;
+                   for(var i = 0; i < allCities.length;i++){
+                   	if(this.toNode.id == allCities[i].nodeID){
+                   	inCity = true;
+                   	cityNum  = i;
+                   		}
+                   }
+
+
+                   if(inCity){
+                   	this.visible = false;
+                   		console.log("reached "+allCities[cityNum].name);
+                   		//allCities[cityNum].parkedCars.push(this);
+                   			this.currCity = allCities[cityNum];
+                   			this.currentlyCharging = allCities[cityNum];
+                   			this.isCharging	= true;
+                   }
+
+                    this.moving = false;
+                    this.currPos.x = this.toNode.x;
+                    this.currPos.y = this.toNode.y;
+                   
+
+
+                    //console.log(this.toNode)	
+
+    			
+               		//this.startMoveWithoutPathfinder(graph.findCoolerPath(this.toNode.id,extremelyTemp));
+	                    
+                }
+                
+                else{
+
+
+                    //move to the next Node 
+                    
+                    this.startShortMove(this.toNode.id,this.moveStack.shift());
+
+                }
+
+
+            }
+        
+
+        }
+
+    }   
+
+
+    startShortMove(from,to){
+
+
+        this.currPos.x = nodes[from].x;
+        this.currPos.y = nodes[from].y;
+        this.moveDir.set(nodes[to].x-nodes[from].x,nodes[to].y-nodes[from].y);
+        var steps = dist(nodes[from].x,nodes[from].y,nodes[to].x,nodes[to].y);
+        
+        //console.log("this car will take "+round(steps)+" frames to move between the nodes");
+        
+        //sets values
+        this.toNode = nodes[to];
+        this.stepsNeeded = round(steps)/this.speed;
+        this.currentStep = 0;
+        this.moveDir.div(round(steps));
+        this.moveDir.mult(this.speed);  
+
+
+        // console.log(this.moveStack);
+
+
+
+    }
+
+
+
+    startMoveWithoutPathfinder(moveArray){
+        
+        this.currPos.x = nodes[moveArray[moveArray.length-1]].x;
+        this.currPos.y = nodes[moveArray[moveArray.length-1]].y;
+        this.hometown = stuttgart;
+        this.moving = true;
+        this.targetNode = moveArray[0];
+        this.moveStack = moveArray;
+        this.startShortMove(this.moveStack.shift(),this.moveStack.shift());
+
+    }
+
+
+	charge(){
+
+		if(this.isCharging = true){
+			for(var i = 0; i<this.currentlyCharging.parkedCars.length;i++	){
+					this.currentlyCharging.parkedCars[i].energy+= environment.simulation.static.car.capacity * environment.carChargeLimit/60;
+
+			}
+			this.chargingCounter++;
+			if(this.chargingCounter	==60){
+				this.chargingCounter= 0;
+				if(environment.daytime<=0){
+							var zu;
+							do{
+									zu = allCities[floor(random(0,allCities.length))];
+							}while(this.currentlyCharging.node.id != zu)
+						this.startMoveWithoutPathfinder(graph.findShortestPat(this.currentlyCharging.node.id,zu));
+				}
+				else{
+					this.isCharging	 = false;
+					this.startMoveWithoutPathfinder(graph.findShortestPath(this.currentlyCharging.node.id,stuttgart.node.id));
+				}
+			}
+		}
+	}
+
+
+
+}
+
+
+
+
+
+
 var SendCount = 0;
+var AverageCount = 0;
 var SpawnCount = 0;
 
 function draw() {
+
+		AverageCount++;
+		if(AverageCount	%300 ==0){
+			environment.simulation.averageCarCharge	= getAverageCarEnergy();		
+		}
+
 
 	SendCount++;
 
@@ -652,7 +944,16 @@ function draw() {
         allCars[i].draw();
     
     }   
+
+    for(var i = 0; i<allEmotions.length;i++){
+    	
+    	allEmotions[i].charge();
+    	allEmotions[i].move();
+    	allEmotions[i].draw();
+
+    }
     
+
 
 
     // if(SpawnCount%5 == 0){
