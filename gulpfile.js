@@ -63,6 +63,17 @@ var dist = {
 
 var scriptPipe = [src.js + '**', '!' + src.js + vendorFolder + '**']
 
+function errorHandler(err) {
+    console.log()
+    console.log('    ERROR'.red)
+    console.log('    Plugin', err.plugin.help, 'encountered', err.name)
+    console.log('    In', err.fileName.warn, 'on line', String(err.loc.line + ':' + err.loc.column).error)
+    console.log()
+    console.log('    ', err.message)
+    console.log(err.codeFrame)
+    console.log()
+}
+
 function fixedLength(str, len) {
     return str + Array(len).join(' ').slice(-len + str.length);
 }
@@ -103,10 +114,10 @@ gulp.task('scripts:lint', function() {
         }))
 })
 
-gulp.task('scripts', function() {
+gulp.task('scripts', ['scripts:lint'], function() {
     gulp.src(scriptPipe)
-        .pipe(sourcemaps.init())
-        // .pipe(concat(src.jsMain))
+        // .pipe(sourcemaps.init())
+        // .pipe(concat(src.jsMain)).on('error', errorHandler)
         // .pipe(include({
         //     includePaths: [
         //         path.join(__dirname, 'src', 'scripts'),
@@ -114,11 +125,11 @@ gulp.task('scripts', function() {
         // }))
         // .on('error', console.log)
         // .pipe(gulp.dest(dist.js))
-        .pipe(babel())
+        .pipe(babel()).on('error', errorHandler)
         // .pipe(uglify().on('error', function(err) {
         //     console.log('\n    ' + err.toString().replace(new RegExp('\n', 'g'), '\n    '));
         // }))
-        .pipe(sourcemaps.write('./'))
+        // .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest(dist.js));
 
     gulp.src(src.js + vendorFolder + '/**').pipe(gulp.dest(dist.js + vendorFolder));
