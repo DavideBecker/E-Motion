@@ -17,9 +17,10 @@
   },
   "homepage": "https://github.com/DavideBecker/p2-g6-EMotion#readme",
   "dependencies": {
-    "babel-preset-env": "^1.5.2",
+    "babel-preset-env": "^1.6.0",
     "colors": "^1.1.2",
-    "electron": "^1.6.11",
+    "electron": "^1.7.4",
+    "emojify": "^1.0.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^4.0.0",
     "gulp-babel": "^6.1.2",
@@ -34,5 +35,8 @@
     "gulp-util": "^3.0.8",
     "json-cycle": "^1.1.0",
     "run-sequence": "^1.2.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1"
   }
 }
