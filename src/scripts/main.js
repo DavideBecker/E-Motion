@@ -15,7 +15,7 @@ var stuttgart;
 var environment = {
     timeline: 0,
     daytime: 0,
-    daytimeSteps: 0.6	,
+    daytimeSteps: 0.1	,
     scale: 1,
 
     simulation: {
@@ -263,7 +263,7 @@ function renderMap(sketch) {
         	ellipse(allCities[i].node.x,allCities[i].node.y,18,18);
         }
         	fill(stuttgart.getColor());
-        	ellipse(stuttgart.node.x,stuttgart.node.y,30,30);
+        	ellipse(stuttgart.node.x,stuttgart.node.y,50,50);
     }
 
 
@@ -366,7 +366,7 @@ class Car{
         this.moveDir = createVector(0,0);
         this.currentStep;
         this.stepsNeeded;
-        this.speed = 5; 
+        this.speed = 1; 
 
         this.stuck = false;
         this.currCity;
@@ -478,7 +478,7 @@ class Car{
                    	this.currCity = allCities[cityNum];
 
                    }
-                   if(this.toNode.id = stuttgart.node.id){
+                   if(this.toNode.id == stuttgart.node.id){
                    		console.log("reached stuttgart");
                    		stuttgart.parkedCars.push(this);
                    		this.currCity = stuttgart;
@@ -585,14 +585,15 @@ function draw() {
 	if(environment.daytime>0&&environment.daytime<50&&environment.daytimeSteps<0){
 		//console.log("night event")
 
-	   if (stuttgart.parkedCars.length>1){
-	   	var tomp = stuttgart.parkedCars.pop();
+	   if (stuttgart.parkedCars.length>0){
+	   	var tomp = stuttgart.parkedCars[stuttgart.parkedCars.length-1];
 	   	//console.log(tomp);
 		//stuttgart.sendAway(stuttgart.parkedCars[stuttgart.parkedCars.length-1].hometown.nodeID);	
 		//stuttgart.parkedCars.pop().goHome();
 		tomp.moveStack = [];
 		tomp.goHome();
 	}
+
 
 	}
 
@@ -613,7 +614,7 @@ function draw() {
 
     //check amount of cars
 
-    /*	
+    	
     if(allCars.length!=environment.simulation.carAmount){
 	    while(allCars.length>environment.simulation.carAmount){
 	    	allCars.pop();	
@@ -626,7 +627,7 @@ function draw() {
 
 	    }
 	}
-	*/
+	
     //draw all cars
     for(var i = 0; i < allCars.length; i++){
         
