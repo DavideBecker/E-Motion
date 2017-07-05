@@ -13,15 +13,14 @@ var stuttgart;
 var allEmotions = [];
 
 
-
 var environment = {
     timeline: 0,
     daytime: 0,
-    daytimeSteps: 0.1	,
+    daytimeSteps: 0.1,
     scale: 1,
 
     simulation: {
-        truckAmount: 6,
+        truckAmount: 20,
         truckUptime: 6, // h
         carAmount: 10,
         carChargeLimit: 0.25, // %
@@ -175,7 +174,7 @@ function createCities(){
 function renderMap(sketch) {
     var showMap = function(sketch) {
         sketch.rectMode(sketch.CENTER);
-        var canvas = sketch.createCanvas(sketch.windowWidth - $('#sidebar').width(), sketch.windowHeight - 3);
+        var canvas = sketch.createCanvas(sketch.windowWidth - $('#sidebar').width() + 100, sketch.windowHeight);
         //sketch.frameRate(1);
         canvas.parent('canvas-wrapper');
 
@@ -212,12 +211,12 @@ function renderMap(sketch) {
             // ellipse(node.x * environment.scale, node.y * environment.scale, 10, 10);
         }
 
-        for(var i = 0; i < allCities.length; i++){
-        	fill(allCities[i].getColor());
-        	ellipse(allCities[i].node.x,allCities[i].node.y,18,18);
-        }
-        	fill(stuttgart.getColor());
-        	ellipse(stuttgart.node.x,stuttgart.node.y,30,30);
+        // for(var i = 0; i < allCities.length; i++){
+        // 	fill(allCities[i].getColor());
+        // 	ellipse(allCities[i].node.x*environment.scale,allCities[i].node.y*environment.scale,18,18);
+        // }
+        // 	fill(stuttgart.getColor());
+        // 	ellipse(stuttgart.node.x*environment.scale,stuttgart.node.y*environment.scale,30,30);
 
         // for(var nodeIndex in nodes) {
         //     var node = nodes[nodeIndex];
@@ -241,7 +240,7 @@ function renderMap(sketch) {
     	BackgroundCounter++;
     	sketch.clear();
     	sketch.fill(getBackgroundColor());
-    	sketch.rect(-10,-10,1920,1080);
+    	sketch.rect(0, 0,sketch.windowWidth * 2,sketch.windowHeight * 2);
     	if(BackgroundCounter%60==0||true){
     		BackgroundCounter=0;
 
@@ -280,26 +279,26 @@ function renderMap(sketch) {
         }
  		 for(var i = 0; i < allCities.length; i++){
         	fill(allCities[i].getColor());
-        	ellipse(allCities[i].node.x,allCities[i].node.y,18,18);
+        	ellipse(allCities[i].node.x*environment.scale,allCities[i].node.y*environment.scale,18,18);
         }
         	fill(stuttgart.getColor());
-        	ellipse(stuttgart.node.x,stuttgart.node.y,50,50);
+        	ellipse(stuttgart.node.x*environment.scale,stuttgart.node.y*environment.scale,50,50);
     }
 
 
+}
     sketch.windowResized = function () {
-        sketch.resizeCanvas(sketch.windowWidth - $('#sidebar').width(), sketch.windowHeight - 3);
+        sketch.resizeCanvas(sketch.windowWidth - $('#sidebar').width() + 100, sketch.windowHeight);
         showMap(sketch)
     }
 
     sketch.setup = function () {
-        var canvas = sketch.createCanvas(sketch.windowWidth - $('#sidebar').width(), sketch.windowHeight - 3);
+        var canvas = sketch.createCanvas(sketch.windowWidth - $('#sidebar').width() + 100, sketch.windowHeight);
         sketch.rectMode(sketch.CENTER);
         //sketch.frameRate(1);
         canvas.parent('canvas-wrapper');
         showMap(sketch)
     }
-}
  	
 }
 
@@ -344,13 +343,18 @@ function setup() {
 			    // frameRate(1)
 			    canvas.parent('canvas-wrapper')
 			    console.log("finished setup");
+    rectMode(CENTER);
+    var canvas = createCanvas(windowWidth - $('#sidebar').width() + 100, windowHeight);
+    // frameRate(1)
+    canvas.parent('canvas-wrapper')
+    console.log("finished setup");
 }
 
 
 
 
 function windowResized() {
-    resizeCanvas(windowWidth - $('#sidebar').width(), windowHeight - 3);
+    resizeCanvas(windowWidth - $('#sidebar').width() + 100, windowHeight);
 }
 
 // console.log(nodes);
@@ -968,9 +972,14 @@ function draw() {
     
     //testCar.move();
     //testCar.draw();
-    
-
 }
+
+function resizeCanvasShit() {
+    environment.scale = $(window).height() / 500
+
+    $(window).trigger('resize');
+}
+
 function mousePressed(){
     for(var nodeIndex in nodes){
         if(dist(mouseX,mouseY,nodes[nodeIndex].x,nodes[nodeIndex].y)<5){
@@ -1028,6 +1037,8 @@ function updateCalculations() {
 }
 
 $(document).ready(function () {
+    resizeCanvasShit()
+
     outputs = {
         chargesPerDay: {
             element: $('#chargesPerDay'),
@@ -1056,6 +1067,11 @@ $(document).ready(function () {
     }
 
     updateCalculations()
+
+    $('#truckAmount').val(environment.simulation.truckAmount);
+    $('#truckUptime').val(environment.simulation.truckUptime);
+    $('#carAmount').val(environment.simulation.carAmount);
+    $('#carChargeLimit').val(environment.simulation.carChargeLimit);
 
     $('#sidebar-toggle').click((event) => {
         event.preventDefault()
