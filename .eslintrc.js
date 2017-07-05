@@ -95,7 +95,10 @@ module.exports = {
             { "max": 2 }
         ],
         "multiline-ternary": 0,
-        "new-cap": "error",
+        "new-cap": [
+            "error",
+            { "newIsCapExceptions": ["p5"] }
+        ],
         "new-parens": "error",
         "newline-after-var": "error",
         "newline-before-return": "error",
