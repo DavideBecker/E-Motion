@@ -125,6 +125,23 @@ class City{
 
 }
 
+var cityDict = {
+    "248169543": 'Ditzingen',
+    "89317467": 'Leonberg',
+    "58922085": 'Sindelnfingen',
+    "249665541": 'Musberg',
+    "157476409": 'Steinbronn',
+    "124873928": 'Filderstadt',
+    "78784342": 'Ostfildern',
+    "98860443": 'Neuhausen',
+    "151269436": 'Esslingen',
+    "13734131": 'Altbach',
+    "90947800": 'Remseck',
+    "216687444": 'Kornwestheim',
+    "7970225": 'Korntal-Münchingen',
+    "199885805": 'Stuttgart'
+}
+
 function createCities(){
 	allCities.push(new City('Ditzingen',248169543));
 	allCities.push(new City('Leonberg',89317467));
