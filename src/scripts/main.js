@@ -8,13 +8,14 @@ var allKeys = Object.keys(nodes);
 var BackgroundCounter = 0;
 var allCities = [];
 var allCitieNames = [];
+var stuttgart;
 
 
 
 var environment = {
     timeline: 0,
     daytime: 0,
-    daytimeSteps: 0.1,
+    daytimeSteps: 0.6	,
     scale: 1,
 
     simulation: {
@@ -86,13 +87,38 @@ class City{
 
 		this.parkedCars[this.parkedCars.length-1].visible = true;
 		this.parkedCars.pop().startMoveWithoutPathfinder(graph.findCoolerPath(this.nodeID,to)); 
+		
 		}
 	}
-
 	getColor(){
+		var energy = 0;
+		
+		if(this.parkedCars.length <1){
+			return color(120,120,120);
+		}
 
+		for(var i = 0; i<this.parkedCars.length;i++){
+		energy+=this.parkedCars[i].energy;
+		}
+		energy/=this.parkedCars.length;
 
-	}
+    	var input = constrain(map(energy,0,environment.simulation.static.car.capacity,0,200),0,200);
+		var r,g,b;
+		r = map(input,0,100,235,242);
+		g = map(input,0,100,87,153);
+		b = map(input,0,100,87,74);
+
+		if(input>100){
+
+			r = map(input,100,200,242,39);
+			g = map(input,100,200,153,174);
+			b = map(input,100,200,74,96);
+				} 
+
+				var temp=color(r,g,b); 
+			return temp;	
+  		}
+
 
 
 
@@ -113,6 +139,7 @@ function createCities(){
 	allCities.push(new City('Remseck',90947800));
 	allCities.push(new City('Kornwestheim',216687444));
 	allCities.push(new City('Korntal-Münchingen',7970225));
+	stuttgart = new City('Stuttgart',199885805);
 
 	allCitieNames = ['Ditzingen','Leonberg','Sindelnfingen','Musberg','Steinbronn','Filderstadt','Ostfildern','Neuhausen','Esslingen','Altbach','Remseck','Kornwestheim','Korntal-Münchingen'];
 }
@@ -165,21 +192,28 @@ function renderMap(sketch) {
             // ellipse(node.x * environment.scale, node.y * environment.scale, 10, 10);
         }
 
-        for(var nodeIndex in nodes) {
-            var node = nodes[nodeIndex];
-
-            sketch.noStroke();
-
-            // stroke(51);
-            // text(node.x + '\n' + node.y, node.x, node.y);
-            // sketch.fill(51)
-            // sketch.ellipse(node.x * environment.scale, node.y * environment.scale, 10, 10);
-
-            if(node.isTown) {
-                sketch.fill(200, 0, 0);
-                sketch.ellipse(node.x * environment.scale, node.y * environment.scale, 14, 14);
-            }
+        for(var i = 0; i < allCities.length; i++){
+        	fill(allCities[i].getColor());
+        	ellipse(allCities[i].node.x,allCities[i].node.y,18,18);
         }
+        	fill(stuttgart.getColor());
+        	ellipse(stuttgart.node.x,stuttgart.node.y,30,30);
+
+        // for(var nodeIndex in nodes) {
+        //     var node = nodes[nodeIndex];
+
+        //     sketch.noStroke();
+
+        //     // stroke(51);
+        //     // text(node.x + '\n' + node.y, node.x, node.y);
+        //     // sketch.fill(51)
+        //     // sketch.ellipse(node.x * environment.scale, node.y * environment.scale, 10, 10);
+
+        //     if(node.isTown) {
+        //         sketch.fill(200, 0, 0);
+        //         sketch.ellipse(node.x * environment.scale, node.y * environment.scale, 14, 14);
+        //     }
+        // }
     }
     
        	//experimental
@@ -224,22 +258,12 @@ function renderMap(sketch) {
             // fill(51)
             // ellipse(node.x * environment.scale, node.y * environment.scale, 10, 10);
         }
-
-        for(var nodeIndex in nodes) {
-            var node = nodes[nodeIndex];
-
-            sketch.noStroke();
-
-            // stroke(51);
-            // text(node.x + '\n' + node.y, node.x, node.y);
-            // sketch.fill(51)
-            // sketch.ellipse(node.x * environment.scale, node.y * environment.scale, 10, 10);
-
-            if(node.isTown) {
-                sketch.fill(200, 0, 0);
-                sketch.ellipse(node.x * environment.scale, node.y * environment.scale, 14, 14);
-            }
+ 		 for(var i = 0; i < allCities.length; i++){
+        	fill(allCities[i].getColor());
+        	ellipse(allCities[i].node.x,allCities[i].node.y,18,18);
         }
+        	fill(stuttgart.getColor());
+        	ellipse(stuttgart.node.x,stuttgart.node.y,30,30);
     }
 
     sketch.windowResized = function() {
@@ -289,7 +313,7 @@ getStreetColor = function(){
     rectMode(CENTER);
     createCanvas(windowWidth /*- $('#sidebar').width() */, windowHeight - 3);
     console.log("finished setup");
-    frameRate(1)
+    frameRate(30);
     rectMode(CENTER);
     var canvas = createCanvas(windowWidth, windowHeight - 3);
     canvas.parent('canvas-wrapper')
@@ -297,7 +321,7 @@ getStreetColor = function(){
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-}
+} 
 
 // console.log(nodes);
 
@@ -339,9 +363,10 @@ class Car{
         this.moveDir = createVector(0,0);
         this.currentStep;
         this.stepsNeeded;
-        this.speed = 1; 
+        this.speed = 5; 
 
         this.stuck = false;
+        this.currCity;
 
         this.image;
         this.moveStack = [];
@@ -397,6 +422,8 @@ class Car{
         }
     }   
     goHome(){
+    	this.visible = true;
+    	this.currCity.parkedCars.pop();
     	this.startMoveWithoutPathfinder(graph.findShortestPath(this.toNode.id,this.hometown.nodeID));
     }
 
@@ -409,7 +436,7 @@ class Car{
         	}
 
 
-        	this.energy -= this.milage/100;
+        	this.energy -= this.milage/1000;
             //move first, think later
             //console.log("moved from "+this.currPos.x+" "+this.currPos.y+" to: "+this.currPos.x+this.moveDir.x+" "+this.currPos.y+this.moveDir.y)
             
@@ -440,21 +467,26 @@ class Car{
                    		}
                    }
 
+
                    if(inCity){
                    	this.visible = false;
-                   	allCities[cityNum].parkedCars.push(this);
+                   		console.log("reached "+allCities[cityNum].name);
+                   		allCities[cityNum].parkedCars.push(this);
+                   	this.currCity = allCities[cityNum];
 
                    }
+                   if(this.toNode.id = stuttgart.node.id){
+                   		console.log("reached stuttgart");
+                   		stuttgart.parkedCars.push(this);
+                   		this.currCity = stuttgart;
+                   		this.visible = false;
+                   }
+
                     this.moving = false;
                     this.currPos.x = this.toNode.x;
                     this.currPos.y = this.toNode.y;
                    
 
-                    var extremelyTemp;
-                    do {
-                    	extremelyTemp = allKeys[floor(random(0,allKeys.length-1))]
-
-                    } while(this.toNode.id == extremelyTemp)
 
                     //console.log(this.toNode)	
 
@@ -498,6 +530,7 @@ class Car{
         this.moveDir.div(round(steps));
         this.moveDir.mult(this.speed);  
 
+
         // console.log(this.moveStack);
 
 
@@ -535,11 +568,28 @@ function draw() {
 	
 		SendCount = 0;
 	
-		if(environment.daytime>50){
+		if(environment.daytime>50 && environment.daytimeSteps>0){
+			//console.log("daytime event")
 			for(var i = 0; i < allCities.length; i++){
+				//wallCities[i].parkedCars[allCities[i].parkedCars.length-1].moveStack = [];
 				allCities[i].sendAway(199885805);
+
 			}
 		}
+
+
+	}
+	if(environment.daytime>0&&environment.daytime<50&&environment.daytimeSteps<0){
+		//console.log("night event")
+
+	   if (stuttgart.parkedCars.length>1){
+	   	var tomp = stuttgart.parkedCars.pop();
+	   	//console.log(tomp);
+		//stuttgart.sendAway(stuttgart.parkedCars[stuttgart.parkedCars.length-1].hometown.nodeID);	
+		//stuttgart.parkedCars.pop().goHome();
+		tomp.moveStack = [];
+		tomp.goHome();
+	}
 
 	}
 
@@ -551,7 +601,7 @@ function draw() {
     fill(50, 200, 0)
 
     environment.daytime+=environment.daytimeSteps;
-    	if(environment.daytime>=150||environment.daytime<=-100){
+    	if(environment.daytime>=110||environment.daytime<=-100){
     		environment.daytimeSteps*=-1;
     		environment.daytime+=environment.daytimeSteps*2;
     	}
@@ -560,7 +610,7 @@ function draw() {
 
     //check amount of cars
 
-    
+    /*	
     if(allCars.length!=environment.simulation.carAmount){
 	    while(allCars.length>environment.simulation.carAmount){
 	    	allCars.pop();	
@@ -573,7 +623,7 @@ function draw() {
 
 	    }
 	}
-	
+	*/
     //draw all cars
     for(var i = 0; i < allCars.length; i++){
         
