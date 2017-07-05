@@ -146,10 +146,9 @@ body
         &:hover:before
             content: attr(tooltip)
             position: absolute
-            text-align: center
             left: 50px
-            width: $sidebarWidth - 20px
-            background-color: $darkGreen
+            width: $sidebarWidth
+            background-color: $mainGreen
             padding: 10px
             margin-top: -60px
             color: #FFF
@@ -179,13 +178,6 @@ body
             position: relative
             top: -1px
             +glow(10px, #FFF)
-
-.columns
-    display: inline-block
-
-    &.two
-        width: 50%
-
 
 .static-value-group
     background-color: darken(#363D45, 5%)
@@ -243,28 +235,29 @@ body
         &.top
             margin: 0 auto 12px
 
-.center-text
-    text-align: center
 
 .param
     &.numbers
+        display: flex
         +shadow(10px, $mainGreen)
-        margin: 10px auto 0
-        width: 82px
+        width: 60%
+        margin: 10px 0 0 0
 
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button
             -webkit-appearance: none
             margin: 0
 
         .subtract, .add
+            height: 0
 
             &:before
                 display: inline-block
                 background-color: $mainGreen
-                width: 82px
-                height: 32px
+                min-width: 42px
+                flex-basis: 42px
+                height: 42px
                 text-align: center
-                line-height: 32px
+                line-height: 42px
                 color: #FFF
 
             &:hover:before
@@ -277,7 +270,6 @@ body
 
         .amount
             height: 42px
-            width: 82px
             border: none
             display: inline-block
             vertical-align: top

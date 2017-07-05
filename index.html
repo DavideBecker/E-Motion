@@ -35,21 +35,11 @@
     <div id="sidebar">
         <h1>Einstellungen</h1>
         <div class="data-group cozy">
-            <div class="two columns center-text">
-                <span class="label" tooltip="Die Anzahl der Trucks, die in Betrieb sind">Anzahl der Trucks</span>
-                <div class="param numbers"><!--
-                    --><div class="add"></div><!--
-                    --><input id="truckAmount" class="amount update-sim" type="number" min="0" max="50" value="8"><!--
-                    --><div class="subtract"></div><!--
-                --></div>
-            </div><!--
-            --><div class="two columns center-text">
-                <span class="label" tooltip="Die Anzahl der Elektroautos, die versorgt werden müssen">Anzahl der Autos</span>
-                <div class="param numbers"><!--
-                    --><div class="add"></div><!--
-                    --><input id="carAmount" class="amount update-sim" type="number" min="0" max="200" value="40"><!--
-                    --><div class="subtract"></div><!--
-                --></div>
+            <span class="label">Anzahl der mobilen Ladetrucks</span>
+            <div class="param numbers">
+                <div class="subtract"></div><!--
+                --><input id="truckAmount" class="amount update-sim" type="number" min="0" max="50" value="8"><!--
+                --><div class="add"></div>
             </div>
         </div>
 
@@ -63,10 +53,6 @@
             <input id="carChargeLimit" class="param draggable unit-percent update-sim" min="0.01" max="1" step="0.01" value="0.25" type="range">
         </div>
 
-        <div class="data-group cozy">
-            
-        </div>
-
         <h1>Trucks</h1>
         <div class="data-group">
             <div class="static-value-group three seamless">
@@ -77,16 +63,20 @@
                 </div><!--
                 --><div class="static-value">
                     <span id="chargesPerMonth" class="amount">423</span>
-                    <span class="label" tooltip="So viele Autos können durch die Trucks jeden Monat aufgeladen werden">Monatlich</span>
+                    <span class="label" tooltip="So viele Autos können durch die Trucks jeden Tag aufgeladen werden">Monatlich</span>
                 </div><!--
                 --><div class="static-value">
                     <span id="chargesPerYear" class="amount">423</span>
-                    <span class="label" tooltip="So viele Autos können durch die Trucks jedes Jahr aufgeladen werden">Jährlich</span>
+                    <span class="label" tooltip="So viele Autos können durch die Trucks jeden Tag aufgeladen werden">Jährlich</span>
                 </div>
             </div>
             <div class="static-value">
+                <span class="amount">423</span>
+                <span class="label" tooltip="So viele Autos können durch die Trucks jeden Tag aufgeladen werden">Autos, die pro Tag geladen werden</span>
+            </div><!--
+            --><div class="static-value">
                 <span id="maxTruckUptime" class="amount">20:51:01</span>
-                <span class="label" tooltip="So lange dauert es, wenn ein Truck ohne Unterbrechungen Autos lädt, bis er leer wird">bis ein Truck selbst aufladen muss</span>
+                <span class="label" tooltip="So viele Autos können durch die Trucks jeden Tag aufgeladen werden">bis ein Truck selbst laden muss</span>
             </div><!--
             --><div class="progress-bar">
                 <span class="label">Aktuelle durchschnittliche Ladung</span>
