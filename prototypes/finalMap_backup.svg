@@ -6,7 +6,6 @@
 	.st0{opacity:0.2;fill:#313131;stroke:#FFFFFF;stroke-miterlimit:10;enable-background:new    ;}
 	.st1{fill:none;stroke:#FAFAFA;stroke-width:3;stroke-miterlimit:10;}
 	.st2{fill:#313131;stroke:#FFFFFF;stroke-miterlimit:10;}
-	.st3{display:none;fill:none;stroke:#FAFAFA;stroke-width:3;stroke-miterlimit:10;}
 </style>
 <title>Element 4</title>
 <g id="Ebene_2">
@@ -148,7 +147,7 @@
 <circle class="st2" cx="94.9" cy="364.6" r="4"/>
 <circle class="st2" cx="221.6" cy="447.2" r="4"/>
 <circle class="st2" cx="223.3" cy="395" r="4"/>
-<line class="st3" x1="336.2" y1="423.7" x2="330.7" y2="396.7"/>
+<line class="st1" x1="336.2" y1="423.7" x2="330.7" y2="396.7"/>
 <circle class="st2" cx="336.2" cy="423.7" r="4"/>
 <circle class="st2" cx="425.4" cy="391.6" r="4"/>
 <circle class="st2" cx="371.7" cy="344.9" r="4"/>
@@ -156,5 +155,4 @@
 <circle class="st2" cx="510.7" cy="356.7" r="4"/>
 <circle class="st2" cx="392.3" cy="101.4" r="4"/>
 <circle class="st2" cx="446.7" cy="162.2" r="4"/>
-<circle class="st2" cx="294.3" cy="271.3" r="4"/>
 </svg>

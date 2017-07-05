@@ -26,7 +26,7 @@ html, body, #sidebar
     height: 100%
 
 .nav-active
-    padding-left: 400px
+    padding-left: $sidebarWidth
 
     #sidebar
         left: -50px
@@ -124,14 +124,19 @@ body
             // border-color: #5A5A5A
 
 .data-group
-    padding: 20px 20px 20px 70px
+    padding-left: 50px
+
+    &.cozy
+        padding: 20px 20px 20px 70px
+
+    &.compact
+        padding: 10px 10px 10px 60px
 
 .label
     font-weight: 300
     font-size: 13px
 
     &[tooltip]
-        position: relative
 
         &:after
             content: " [?]"
@@ -141,14 +146,13 @@ body
         &:hover:before
             content: attr(tooltip)
             position: absolute
-            left: 0
-            max-width: 300px
-            width: 100%
+            left: 50px
+            width: $sidebarWidth
             background-color: $mainGreen
             padding: 10px
+            margin-top: -60px
             color: #FFF
-            z-index: 9999
-            top: 20px
+            z-index: 99999
             line-height: 16px
 
 .progress-bar
@@ -175,10 +179,22 @@ body
             top: -1px
             +glow(10px, #FFF)
 
+.static-value-group
+    background-color: darken(#363D45, 5%)
+    padding-top: 20px
+
+    &.three .static-value
+        width: 31.11111%
+        margin: 1.11111%
+
+    .headline
+        display: block
+        text-align: center
+
 .static-value
     display: inline-block
-    width: 46%
-    margin: 2%
+    width: 48%
+    margin: 2% 1%
     padding: 20px 5px
     background-color: darken(#363D45, 5%)
     height: 110px
