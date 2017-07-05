@@ -1,14 +1,18 @@
 var streets = locations.streets;
 var towns = locations.towns;
 var cities = locations.cities;
-var allCars = [];
+var allCars = [0];
+allCars.pop();
 var allKeys = Object.keys(nodes);
+var BackgroundCounter = 0;
+
+
 
 var environment = {
     timeline: 0,
     daytime: 0,
-    daytimeSteps: 0.001,
-    scale: 1.6,
+    daytimeSteps: 0.1,
+    scale: 1,
 
     simulation: {
         truckAmount: 6,
@@ -17,6 +21,9 @@ var environment = {
         carChargeLimit: 25 // In %
     }
 }
+
+var getStreetColor;
+var getBackgroundColor;
 
 // $(window).on('resize', function() {
 //     //
@@ -34,11 +41,48 @@ graph.findCoolerPath = function(from,to){
 
 // console.log(graph.findShortestPath('4341680', '152748987'))
 
+
+
+
+class City{
+	constructor(name,nodeID){
+		this.id = name;
+		this.name = this.id;
+		this.nodeID = nodeID;
+		this.node = nodes[nodeID];
+
+
+		this.parkedCars = [];
+
+		this.color;
+
+	}
+	draw(){
+
+	}
+
+	getColor(){
+
+
+	}
+
+
+
+
+}
+
+
+
+
+
+
+
+
 function renderMap(sketch) {
     sketch.setup = function() {
         sketch.rectMode(sketch.CENTER);
         var canvas = sketch.createCanvas(sketch.windowWidth - $('#sidebar').width(), sketch.windowHeight - 3);
-
+        //sketch.frameRate(1);
         canvas.parent('canvas-wrapper');
 
         for(var nodeIndex in nodes) {
@@ -62,13 +106,13 @@ function renderMap(sketch) {
             // stroke(51);
             // text(node.x + '\n' + node.   y, node.x, node.y);
 
-            for(var connectionIndex = 0; connectionIndex < node.connectedTo.length; connectionIndex++) {
-                var connectedNode = nodes[node.connectedTo[connectionIndex]];
+            // for(var connectionIndex = 0; connectionIndex < node.connectedTo.length; connectionIndex++) {
+            //     var connectedNode = nodes[node.connectedTo[connectionIndex]];
 
-                stroke(196);
-                strokeWeight(1)
-                line(node.x * environment.scale, node.y * environment.scale, connectedNode.x * environment.scale, connectedNode.y * environment.scale);
-            }
+            //     stroke(196);
+            //     strokeWeight(1)
+            //     line(node.x * environment.scale, node.y * environment.scale, connectedNode.x * environment.scale, connectedNode.y * environment.scale);
+            // }
 
             // fill(51)
             // ellipse(node.x * environment.scale, node.y * environment.scale, 10, 10);
@@ -90,14 +134,99 @@ function renderMap(sketch) {
             }
         }
     }
+    
+       	//experimental
+    sketch.draw = function(){
+    	BackgroundCounter++;
+    	sketch.clear();
+    	sketch.fill(getBackgroundColor());
+    	sketch.rect(-10,-10,1920,1080);
+    	if(BackgroundCounter%60==0||true){
+    		BackgroundCounter=0;
+
+    		
+    	for(var nodeIndex in nodes) {
+            var node = nodes[nodeIndex];
+
+            // stroke(51);
+            // text(node.x + '\n' + node.   y, node.x, node.y);
+
+            for(var connectionIndex = 0; connectionIndex < node.connectedTo.length; connectionIndex++) {
+                var connectedNode = nodes[node.connectedTo[connectionIndex]];
+
+                sketch.stroke(getStreetColor());
+                sketch.strokeWeight(3)
+                sketch.line(node.x * environment.scale, node.y * environment.scale, connectedNode.x * environment.scale, connectedNode.y * environment.scale);
+            }
+        }
+
+        for(var nodeIndex in nodes) {
+            var node = nodes[nodeIndex];
+
+            // stroke(51);
+            // text(node.x + '\n' + node.   y, node.x, node.y);
+
+            // for(var connectionIndex = 0; connectionIndex < node.connectedTo.length; connectionIndex++) {
+            //     var connectedNode = nodes[node.connectedTo[connectionIndex]];
+
+            //     stroke(getStreetColor());
+            //     strokeWeight(1)
+            //     line(node.x * environment.scale, node.y * environment.scale, connectedNode.x * environment.scale, connectedNode.y * environment.scale);
+            // }
+
+            // fill(51)
+            // ellipse(node.x * environment.scale, node.y * environment.scale, 10, 10);
+        }
+
+        for(var nodeIndex in nodes) {
+            var node = nodes[nodeIndex];
+
+            sketch.noStroke();
+
+            // stroke(51);
+            // text(node.x + '\n' + node.y, node.x, node.y);
+            // sketch.fill(51)
+            // sketch.ellipse(node.x * environment.scale, node.y * environment.scale, 10, 10);
+
+            if(node.isTown) {
+                sketch.fill(200, 0, 0);
+                sketch.ellipse(node.x * environment.scale, node.y * environment.scale, 14, 14);
+            }
+        }
+    }
+
 }
+ 	
+}
+
 
 var map = new p5(renderMap);
 
 function setup() {
+//frameRate(60);
+
+getBackgroundColor = function(){
+	return map(constrain(environment.daytime,0,100),0,100,79,255);
+}
+
+
+getStreetColor = function(){
+	return map(constrain(environment.daytime,0,100),0,100,192,69);
+}
+
+	console.log(environment.simulation.carAmount);
+
+	for(var i = 0 ; i <  environment.simulation.carAmount ; i++){
+		
+		allCars[i]=new Car();
+		allCars[i].startMoveWithoutPathfinder(graph.findShortestPath(  allKeys[floor(random(0,allKeys.length))]  ,  allKeys[floor(random(0,allKeys.length-1))]  ))
+
+	}
+
+
     rectMode(CENTER);
     createCanvas(windowWidth /*- $('#sidebar').width() */, windowHeight - 3);
-
+    console.log("finished setup");
 }
 
 console.log(nodes);
@@ -114,8 +243,14 @@ class Car{
     constructor(){
         this.targetNode;
         this.fromNode;
-        this.energy;
-        this.milage;
+        this.maxEnergy = 24;
+        this.energy = 24;
+        this.tempEnergy =24;
+
+        this.color;
+        this.getColor();
+
+        this.milage = 15;
         this.currNode;
     
         this.currPos={
@@ -131,23 +266,55 @@ class Car{
         this.stepsNeeded;
         this.speed = 1; 
 
+        this.stuck = false;
 
         this.image;
         this.moveStack = [];
 
         }
+    getColor(){
+    		
+		var input = constrain(map(this.energy,0,this.maxEnergy,0,200),0,200);
+		var r,g,b;
+		r = map(input,0,100,235,242);
+		g = map(input,0,100,87,153);
+		b = map(input,0,100,87,74);
+
+		if(input>100){
+
+			r = map(input,100,200,242,39);
+			g = map(input,100,200,153,174);
+			b = map(input,100,200,74,96);
+				} 
+
+				var temp=color(r,g,b); 
+			this.color = temp;	
+  		}
+
 
     draw(){
         
         if(this.moving){
+        	
+			/*
+			rect(0,0,10,10);
+        	push();
+        	rectMode(CENTER);
+            
+            rotate(this.moveDir.heading());
+            translate(this.currPos.x,this.currPos.y);
+            pop();
+            */
+            if( round(this.energy/0.25)*0.25!= round(this.tempEnergy/0.25)*0.25){
+           		this.getColor();
+           		this.tempEnergy=this.energy;
+            }
 
-            // rectMode(CENTER);
-            // rect(0,0,10,10);
-            // rotate(this.moveDir.heading());
-            // translate(this.currPos.x,this.currPos.y);
 
             rectMode(CENTER);
-            rect(this.currPos.x*environment.scale, this.currPos.y*environment.scale, 10,10);
+            fill(this.color);
+            noStroke();
+            rect(this.currPos.x*environment.scale, this.currPos.y*environment.scale, 20,20);
         // /*
         // image(this.image,this.currPos.x,this.currPos.y);
         // */
@@ -157,14 +324,24 @@ class Car{
     move(){
         if(this.moving){
 
+        	if(this.energy < 0 || this.energy > this.maxEnergy){
+        		//this.stuck = true;
+        		this.milage*=-1;
+        	}
 
+
+        	this.energy -= this.milage/100;
             //move first, think later
             //console.log("moved from "+this.currPos.x+" "+this.currPos.y+" to: "+this.currPos.x+this.moveDir.x+" "+this.currPos.y+this.moveDir.y)
+            
+ 			if(!this.stuck){
             this.currPos.x+=this.moveDir.x;
             this.currPos.y+=this.moveDir.y;
             this.currentStep++;
-
+        	}
             //check if it reached a Node;
+
+           
             if(this.stepsNeeded-1<this.currentStep){
 
                 //check if its not the targetNode
@@ -178,9 +355,16 @@ class Car{
                     this.moving = false;
                     this.currPos.x = this.toNode.x;
                     this.currPos.y = this.toNode.y;
-                    
-                    //this.startMoveWithoutPathfinder(graph.findShortestPath(this.toNode.id,allKeys[floor(random(0,allKeys.length-1))]));
-                    
+                    var extremelyTemp;
+                    do {
+                    	extremelyTemp = allKeys[floor(random(0,allKeys.length-1))]
+
+                    } while(this.toNode.id == extremelyTemp)
+
+                    //console.log(this.toNode)	
+    			
+               		this.startMoveWithoutPathfinder(graph.findCoolerPath(this.toNode.id,extremelyTemp));
+	                    
                 }
                 
                 else{
@@ -192,7 +376,9 @@ class Car{
 
                 }
 
+
             }
+        
 
         }
 
@@ -246,28 +432,54 @@ class Car{
 
 
 var SpawnCount = 0;
+
 function draw() {
-    background(255);
-    fill(51)
+
+    //background(255);
+    clear();
+
+   //fill(51)
     
     fill(50, 200, 0)
-    //anim.animate();
-    SpawnCount++;
 
+    environment.daytime+=environment.daytimeSteps;
+    	if(environment.daytime>=100||environment.daytime<=0){
+    		environment.daytimeSteps*=-1;
+    		environment.daytime+=environment.daytimeSteps*2;
+    	}
+    //anim.animate();
+    //SpawnCount++;
+
+    //check amount of cars
+
+    /*
+    if(allCars.length!=environment.simulation.carAmount){
+	    while(allCars.length>environment.simulation.carAmount){
+	    	allCars.pop();	
+	    }
+	    while(allCars.length<environment.simulation.carAmount){
+
+	    }
+	}
+	*/
+    //draw all cars
     for(var i = 0; i < allCars.length; i++){
         
         allCars[i].move();
         allCars[i].draw();
+    
     }   
     
-    if(SpawnCount%5 == 0){
-        if(allCars.length>300){
-            allCars.shift();
-        }
-        allCars[allCars.length] = new Car();
-        // allCars[allCars.length-1].startMoveWithoutPathfinder(graph.findShortestPath(46207908,4341680));
-         allCars[allCars.length-1].startMoveWithoutPathfinder(graph.findCoolerPath(46207908,4341680));
-    }
+
+
+    // if(SpawnCount%5 == 0){
+    //     if(allCars.length>300){
+    //         allCars.shift();
+    //     }
+    //     allCars[allCars.length] = new Car();
+    //     // allCars[allCars.length-1].startMoveWithoutPathfinder(graph.findShortestPath(46207908,4341680));
+    //      allCars[allCars.length-1].startMoveWithoutPathfinder(graph.findCoolerPath(46207908,4341680));
+    // }
 
     
     //testCar.move();

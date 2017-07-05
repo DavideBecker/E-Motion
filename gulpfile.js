@@ -115,9 +115,9 @@ gulp.task('scripts', function() {
         // .on('error', console.log)
         // .pipe(gulp.dest(dist.js))
         .pipe(babel())
-        .pipe(uglify().on('error', function(err) {
-            console.log('\n    ' + err.toString().replace(new RegExp('\n', 'g'), '\n    '));
-        }))
+        // .pipe(uglify().on('error', function(err) {
+        //     console.log('\n    ' + err.toString().replace(new RegExp('\n', 'g'), '\n    '));
+        // }))
         .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest(dist.js));
 
