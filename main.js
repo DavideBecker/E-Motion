@@ -13,6 +13,8 @@ function createWindow() {
         height: 600
     })
 
+    win.setFullScreen(true)
+
     // and load the index.html of the app.
     win.loadURL(url.format({
         pathname: path.join(__dirname, 'index.html'),

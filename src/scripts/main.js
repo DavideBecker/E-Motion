@@ -2,6 +2,8 @@ var streets = locations.streets;
 var towns = locations.towns;
 var cities = locations.cities;
 var allCars = [];
+var allCars = [0];
+allCars.pop();
 var allKeys = Object.keys(nodes);
 var BackgroundCounter = 0;
 var allCities = [];
@@ -17,9 +19,25 @@ var environment = {
 
     simulation: {
         truckAmount: 6,
-        truckUptime: 6, // In h
+        truckUptime: 6, // h
         carAmount: 10,
-        carChargeLimit: 25 // In %
+        carChargeLimit: 0.25, // %
+
+        static: {
+            truck: {
+                capacity: 400, // kWh
+                chargeSpeed: 120, // kWh
+                mileage: 22, // kWh per 100 KM
+                averageSpeed: 40 // km/h
+            },
+            car: {
+                capacity: 24, // kWh
+                chargeSpeed: 22, // kWh
+                mileage: 15 // kWh per 100 KM
+            },
+            distanceToLocations: 27,
+            distanceBetweenCharges: 738
+        }
     }
 }
 
@@ -108,7 +126,7 @@ function createCities(){
 
 
 function renderMap(sketch) {
-    sketch.setup = function() {
+    var showMap = function(sketch) {
         sketch.rectMode(sketch.CENTER);
         var canvas = sketch.createCanvas(sketch.windowWidth - $('#sidebar').width(), sketch.windowHeight - 3);
         //sketch.frameRate(1);
@@ -224,12 +242,20 @@ function renderMap(sketch) {
         }
     }
 
+    sketch.windowResized = function() {
+        sketch.resizeCanvas(sketch.windowWidth, sketch.windowHeight);
+        showMap(sketch)
+    }
+
+    sketch.setup = function() {
+        showMap(sketch)
+    }
 }
  	
 }
 
 
-var map = new p5(renderMap);
+var staticMap = new p5(renderMap);
 
 function setup() {
 //frameRate(60);
@@ -263,10 +289,17 @@ getStreetColor = function(){
     rectMode(CENTER);
     createCanvas(windowWidth /*- $('#sidebar').width() */, windowHeight - 3);
     console.log("finished setup");
+    frameRate(1)
+    rectMode(CENTER);
+    var canvas = createCanvas(windowWidth, windowHeight - 3);
+    canvas.parent('canvas-wrapper')
 }
 
-console.log(nodes);
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
 
+// console.log(nodes);
 
 
 
@@ -448,7 +481,6 @@ class Car{
     }   
 
 
-
     startShortMove(from,to){
 
 
@@ -466,7 +498,7 @@ class Car{
         this.moveDir.div(round(steps));
         this.moveDir.mult(this.speed);  
 
-        console.log(this.moveStack);
+        // console.log(this.moveStack);
 
 
 
@@ -484,9 +516,6 @@ class Car{
         this.startShortMove(this.moveStack.shift(),this.moveStack.shift());
 
     }
-
-    
-
 }
 
 
@@ -495,6 +524,7 @@ class Car{
 
 
 var SendCount = 0;
+var SpawnCount = 0;
 
 function draw() {
 
@@ -577,18 +607,107 @@ function mousePressed(){
     }
 }
 
+function calculateCarsChargedPerTruck() {
+    var chargingCapacity = calculateChargingCapacity(environment.simulation.static.truck.capacity, environment.simulation.static.truck.mileage, environment.simulation.static.distanceToLocations)
+
+    var amountOfCarsThatCanBeCharged = calculateAmountOfCarsThatCanBeCharged(chargingCapacity, environment.simulation.static.car.capacity, environment.simulation.carChargeLimit);
+    var travelTime = calculateTravelTime(environment.simulation.static.distanceBetweenCharges, environment.simulation.static.truck.averageSpeed);
+    var chargeTime = calculateChargeTime(environment.simulation.static.car.capacity, environment.simulation.static.car.chargeSpeed, environment.simulation.carChargeLimit);
+
+    var chargeCycleTime = calculateChargeCycleTime(amountOfCarsThatCanBeCharged, travelTime, chargeTime) + calculateTravelTime(environment.simulation.static.distanceToLocations, environment.simulation.static.truck.averageSpeed) * 1000
+
+    var averageChargeTime = calculateAverageChargeTime(amountOfCarsThatCanBeCharged, chargeCycleTime);
+
+    return calculateChargeableCarsInTimeframe(averageChargeTime, convertTime(environment.simulation.truckUptime, 'h', 's'));
+}
+
+function calulateCarsChargedPerDay() {
+    return Math.floor(calculateCarsChargedPerTruck() * environment.simulation.truckAmount);
+}
+
+function calulateCarsChargedPerMonth() {
+    return Math.floor(calculateCarsChargedPerTruck() * environment.simulation.truckAmount * 30.4);
+}
+
+function calulateCarsChargedPerYear() {
+    return Math.floor(calculateCarsChargedPerTruck() * environment.simulation.truckAmount * 365.25);
+}
+
+function calulateMaxTruckUptime() {
+    var chargingCapacity = calculateChargingCapacity(environment.simulation.static.truck.capacity, environment.simulation.static.truck.mileage, environment.simulation.static.distanceToLocations)
+
+    var amountOfCarsThatCanBeCharged = calculateAmountOfCarsThatCanBeCharged(chargingCapacity, environment.simulation.static.car.capacity, environment.simulation.carChargeLimit);
+    var travelTime = calculateTravelTime(environment.simulation.static.distanceBetweenCharges, environment.simulation.static.truck.averageSpeed);
+    var chargeTime = calculateChargeTime(environment.simulation.static.car.capacity, environment.simulation.static.car.chargeSpeed, environment.simulation.carChargeLimit);
+
+    var chargeCycleTime = calculateChargeCycleTime(amountOfCarsThatCanBeCharged, travelTime, chargeTime) + calculateTravelTime(environment.simulation.static.distanceToLocations, environment.simulation.static.truck.averageSpeed) * 1000
+
+    return prettyTime(chargeCycleTime);
+}
+
+var outputs
+
+function updateCalculations() {
+    for(var outputId in outputs) {
+        var output = outputs[outputId]
+
+        output.element.html(output.calculate())
+    }
+}
+
 $(document).ready(function() {
+    outputs = {
+        chargesPerDay: {
+            element: $('#chargesPerDay'),
+            calculate: function() {
+                return calulateCarsChargedPerDay()
+            }
+        },
+        chargesPerMonth: {
+            element: $('#chargesPerMonth'),
+            calculate: function() {
+                return calulateCarsChargedPerMonth()
+            }
+        },
+        chargesPerYear: {
+            element: $('#chargesPerYear'),
+            calculate: function() {
+                return calulateCarsChargedPerYear()
+            }
+        },
+        maxTruckUptime: {
+            element: $('#maxTruckUptime'),
+            calculate: function() {
+                return calulateMaxTruckUptime()
+            }
+        }
+    }
+
+    updateCalculations()
+
     $('#sidebar-toggle').click((event) => {
         event.preventDefault()
         $('body').toggleClass('nav-active');
     })
 
-    $('.param.draggable').each((i, el) => {
-        $(el).attr('data-value', $(el).val())
+    $('.param.draggable').each(function(i, el) {
+        var val = $(el).val()
+
+        if($(el).hasClass('unit-percent')) {
+            val *= 100
+        }
+
+        $(el).attr('data-value', Math.floor(val))
     })
 
     $('.param.draggable').on('input', function(event) {
-        $(this).attr('data-value', $(this).val())
+        var val = $(this).val()
+
+        if($(this).hasClass('unit-percent')) {
+            val *= 100
+        }
+
+        $(this).attr('data-value', Math.floor(val))
     })
 
     $('.param.numbers .subtract').click(function(event) {
@@ -646,5 +765,9 @@ $(document).ready(function() {
         console.log('carChargeLimit changed')
 
         environment.simulation.carChargeLimit = Number($(this).val())
+    })
+
+    $('.update-sim').change(function() {
+        updateCalculations()
     })
 })
