@@ -1,10 +1,13 @@
 var streets = locations.streets;
 var towns = locations.towns;
 var cities = locations.cities;
+var allCars = [];
 var allCars = [0];
 allCars.pop();
 var allKeys = Object.keys(nodes);
 var BackgroundCounter = 0;
+var allCities = [];
+var allCitieNames = [];
 
 
 
@@ -65,7 +68,7 @@ class City{
 		this.id = name;
 		this.name = this.id;
 		this.nodeID = nodeID;
-		this.node = nodes[nodeID];
+		this.node = nodes[this.nodeID];
 
 
 		this.parkedCars = [];
@@ -86,6 +89,25 @@ class City{
 
 
 }
+
+function createCities(){
+	allCities.push(new City('Ditzingen',248169543));
+	allCities.push(new City('Leonberg',89317467));
+	allCities.push(new City('Sindelnfingen',58922085));
+	allCities.push(new City('Musberg',249665541));
+	allCities.push(new City('Steinbronn',157476409));
+	allCities.push(new City('Filderstadt',124873928));
+	allCities.push(new City('Ostfildern',78784342));
+	allCities.push(new City('Neuhausen',98860443));
+	allCities.push(new City('Esslingen',151269436));
+	allCities.push(new City('Altbach',13734131));
+	allCities.push(new City('Remseck',90947800));
+	allCities.push(new City('Kornwestheim',216687444));
+	allCities.push(new City('Korntal-Münchingen',7970225));
+
+	allCitieNames = ['Ditzingen','Leonberg','Sindelnfingen','Musberg','Steinbronn','Filderstadt','Ostfildern','Neuhausen','Esslingen','Altbach','Remseck','Kornwestheim','Korntal-Münchingen'];
+}
+
 
 
 
@@ -229,6 +251,8 @@ var staticMap = new p5(renderMap);
 function setup() {
 //frameRate(60);
 
+createCities();
+
 getBackgroundColor = function(){
 	return map(constrain(environment.daytime,0,100),0,100,79,255);
 }
@@ -242,8 +266,10 @@ getStreetColor = function(){
 
 	for(var i = 0 ; i <  environment.simulation.carAmount ; i++){
 		
-		allCars[i]=new Car();
-		allCars[i].startMoveWithoutPathfinder(graph.findShortestPath(  allKeys[floor(random(0,allKeys.length))]  ,  allKeys[floor(random(0,allKeys.length-1))]  ))
+		allCars[i]=new Car( allCities[floor(random(0,allCities.length))]);
+		//allCars[i].hometown 
+		console.log(allCars[i].hometown);
+		allCars[i].startMoveWithoutPathfinder(graph.findCoolerPath( allCars[i].hometown.node.id ,  allKeys[floor(random(0,allKeys.length-1))]  ))
 
 	}
 
@@ -264,8 +290,14 @@ function windowResized() {
 // console.log(nodes);
 
 
-class Car {
-    constructor() {
+
+
+
+
+
+
+class Car{
+    constructor(hometown){
         this.targetNode;
         this.fromNode;
         this.maxEnergy = 24;
@@ -277,12 +309,18 @@ class Car {
 
         this.milage = 15;
         this.currNode;
-    
+    	this.hometown = hometown;
+
+
         this.currPos={
             x:0,
             y:0
+        
         }
 
+        this.currPos.x = this.hometown.node.x;
+        this.currPos.y = this.hometown.node.y;
+        
 
         //aus meinem alten Auto
         this.moving = false;
@@ -295,6 +333,7 @@ class Car {
 
         this.image;
         this.moveStack = [];
+        this.visible = true;
 
         }
     getColor(){
@@ -319,7 +358,7 @@ class Car {
 
     draw(){
         
-        if(this.moving){
+       if(this.visible){
         	
 			/*
 			rect(0,0,10,10);
@@ -339,12 +378,15 @@ class Car {
             rectMode(CENTER);
             fill(this.color);
             noStroke();
-            rect(this.currPos.x*environment.scale, this.currPos.y*environment.scale, 20,20);
+            rect(this.currPos.x*environment.scale, this.currPos.y*environment.scale, 12,12);
         // /*
         // image(this.image,this.currPos.x,this.currPos.y);
         // */
         }
     }   
+    goHome(){
+    	this.startMoveWithoutPathfinder(graph.findShortestPath(this.toNode.id,this.hometown.nodeID));
+    }
 
     move(){
         if(this.moving){
@@ -376,10 +418,26 @@ class Car {
                     //stop Moving and get on the exact position of the Node
                     //to hide behind it
                     //console.log("the car reached the target");
-                    
+                   
+                   var inCity = false;
+                   var cityNum = 0;
+                   for(var i = 0; i < allCities.length;i++){
+                   	if(this.toNode.id == allCities[i].nodeID){
+                   	inCity = true;
+                   	cityNum  = i;
+                   		}
+                   }
+
+                   if(inCity){
+                   	this.visible = false;
+                   	allCities[cityNum].parkedCars.push(this);
+
+                   }
                     this.moving = false;
                     this.currPos.x = this.toNode.x;
                     this.currPos.y = this.toNode.y;
+                   
+
                     var extremelyTemp;
                     do {
                     	extremelyTemp = allKeys[floor(random(0,allKeys.length-1))]
@@ -387,8 +445,9 @@ class Car {
                     } while(this.toNode.id == extremelyTemp)
 
                     //console.log(this.toNode)	
+
     			
-               		this.startMoveWithoutPathfinder(graph.findCoolerPath(this.toNode.id,extremelyTemp));
+               		//this.startMoveWithoutPathfinder(graph.findCoolerPath(this.toNode.id,extremelyTemp));
 	                    
                 }
                 
@@ -469,16 +528,18 @@ function draw() {
 
     //check amount of cars
 
-    /*
+    
     if(allCars.length!=environment.simulation.carAmount){
 	    while(allCars.length>environment.simulation.carAmount){
 	    	allCars.pop();	
 	    }
 	    while(allCars.length<environment.simulation.carAmount){
+	    	//push cars from random cities
+	    	allCars.push(new Car(allCities[floor(random(0,allCities.length))]))
 
 	    }
 	}
-	*/
+	
     //draw all cars
     for(var i = 0; i < allCars.length; i++){
         
