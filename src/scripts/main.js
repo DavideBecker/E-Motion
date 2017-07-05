@@ -266,12 +266,17 @@ function renderMap(sketch) {
         	ellipse(stuttgart.node.x,stuttgart.node.y,30,30);
     }
 
-    sketch.windowResized = function() {
-        sketch.resizeCanvas(sketch.windowWidth, sketch.windowHeight);
+
+    sketch.windowResized = function () {
+        sketch.resizeCanvas(sketch.windowWidth - $('#sidebar').width(), sketch.windowHeight - 3);
         showMap(sketch)
     }
 
-    sketch.setup = function() {
+    sketch.setup = function () {
+        var canvas = sketch.createCanvas(sketch.windowWidth - $('#sidebar').width(), sketch.windowHeight - 3);
+        sketch.rectMode(sketch.CENTER);
+        //sketch.frameRate(1);
+        canvas.parent('canvas-wrapper');
         showMap(sketch)
     }
 }
@@ -311,17 +316,15 @@ getStreetColor = function(){
 
 
     rectMode(CENTER);
-    createCanvas(windowWidth /*- $('#sidebar').width() */, windowHeight - 3);
-    console.log("finished setup");
-    frameRate(30);
-    rectMode(CENTER);
-    var canvas = createCanvas(windowWidth, windowHeight - 3);
+    var canvas = createCanvas(windowWidth - $('#sidebar').width(), windowHeight - 3);
+    // frameRate(1)
     canvas.parent('canvas-wrapper')
+    console.log("finished setup");
 }
 
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
-} 
+    resizeCanvas(windowWidth - $('#sidebar').width(), windowHeight - 3);
+}
 
 // console.log(nodes);
 
@@ -698,36 +701,36 @@ function calulateMaxTruckUptime() {
 var outputs
 
 function updateCalculations() {
-    for(var outputId in outputs) {
+    for (var outputId in outputs) {
         var output = outputs[outputId]
 
         output.element.html(output.calculate())
     }
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
     outputs = {
         chargesPerDay: {
             element: $('#chargesPerDay'),
-            calculate: function() {
+            calculate: function () {
                 return calulateCarsChargedPerDay()
             }
         },
         chargesPerMonth: {
             element: $('#chargesPerMonth'),
-            calculate: function() {
+            calculate: function () {
                 return calulateCarsChargedPerMonth()
             }
         },
         chargesPerYear: {
             element: $('#chargesPerYear'),
-            calculate: function() {
+            calculate: function () {
                 return calulateCarsChargedPerYear()
             }
         },
         maxTruckUptime: {
             element: $('#maxTruckUptime'),
-            calculate: function() {
+            calculate: function () {
                 return calulateMaxTruckUptime()
             }
         }
@@ -740,57 +743,57 @@ $(document).ready(function() {
         $('body').toggleClass('nav-active');
     })
 
-    $('.param.draggable').each(function(i, el) {
+    $('.param.draggable').each(function (i, el) {
         var val = $(el).val()
 
-        if($(el).hasClass('unit-percent')) {
+        if ($(el).hasClass('unit-percent')) {
             val *= 100
         }
 
         $(el).attr('data-value', Math.floor(val))
     })
 
-    $('.param.draggable').on('input', function(event) {
+    $('.param.draggable').on('input', function (event) {
         var val = $(this).val()
 
-        if($(this).hasClass('unit-percent')) {
+        if ($(this).hasClass('unit-percent')) {
             val *= 100
         }
 
         $(this).attr('data-value', Math.floor(val))
     })
 
-    $('.param.numbers .subtract').click(function(event) {
+    $('.param.numbers .subtract').click(function (event) {
         var $input = $(this).siblings('.amount')
         var val = Number($input.val())
 
-        if(val > 0) {
+        if (val > 0) {
             $input.val(val - 1)
         }
 
         $input.trigger('change')
     })
 
-    $('.param.numbers .amount').change(function() {
+    $('.param.numbers .amount').change(function () {
         var $input = $(this)
         var val = Number($input.val())
         var max = Number($input.attr('max'))
 
-        if(val > max) {
+        if (val > max) {
             $input.val(max)
         }
 
-        if(val < 0) {
+        if (val < 0) {
             $input.val(0)
         }
     })
 
-    $('.param.numbers .add').click(function(event) {
+    $('.param.numbers .add').click(function (event) {
         var $input = $(this).siblings('.amount')
         var val = Number($input.val())
         var max = Number($input.attr('max'))
 
-        if(val < max) {
+        if (val < max) {
             $input.val(val + 1)
         } else {
             $input.val(max)
@@ -799,25 +802,31 @@ $(document).ready(function() {
         $input.trigger('change')
     })
 
-    $('#truckAmount').change(function() {
+    $('#truckAmount').change(function () {
         console.log('truckAmount changed')
 
         environment.simulation.truckAmount = Number($(this).val())
     })
 
-    $('#truckUptime').change(function() {
+    $('#carAmount').change(function () {
+        console.log('carAmount changed')
+
+        environment.simulation.carAmount = Number($(this).val())
+    })
+
+    $('#truckUptime').change(function () {
         console.log('truckUptime changed')
 
         environment.simulation.truckUptime = Number($(this).val())
     })
 
-    $('#carChargeLimit').change(function() {
+    $('#carChargeLimit').change(function () {
         console.log('carChargeLimit changed')
 
         environment.simulation.carChargeLimit = Number($(this).val())
     })
 
-    $('.update-sim').change(function() {
+    $('.update-sim').change(function () {
         updateCalculations()
     })
 })
