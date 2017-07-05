@@ -62,6 +62,15 @@ class City{
 
 	}
 
+	sendAway(to){
+
+		if(this.parkedCars.length>0){
+
+		this.parkedCars[this.parkedCars.length-1].visible = true;
+		this.parkedCars.pop().startMoveWithoutPathfinder(graph.findCoolerPath(this.nodeID,to)); 
+		}
+	}
+
 	getColor(){
 
 
@@ -241,9 +250,12 @@ getStreetColor = function(){
 	for(var i = 0 ; i <  environment.simulation.carAmount ; i++){
 		
 		allCars[i]=new Car( allCities[floor(random(0,allCities.length))]);
+		allCars[i].visible = false;
+		allCars[i].hometown.parkedCars.push(allCars[i]);
 		//allCars[i].hometown 
 		console.log(allCars[i].hometown);
-		allCars[i].startMoveWithoutPathfinder(graph.findCoolerPath( allCars[i].hometown.node.id ,  allKeys[floor(random(0,allKeys.length-1))]  ))
+
+		//allCars[i].startMoveWithoutPathfinder(graph.findCoolerPath( allCars[i].hometown.node.id ,  allKeys[floor(random(0,allKeys.length-1))]  ))
 
 	}
 
@@ -482,9 +494,24 @@ class Car{
 
 
 
-var SpawnCount = 0;
+var SendCount = 0;
 
 function draw() {
+
+	SendCount++;
+
+	if(SendCount % 5 == 0 ){ 
+		//console.log("send event");
+	
+		SendCount = 0;
+	
+		if(environment.daytime>50){
+			for(var i = 0; i < allCities.length; i++){
+				allCities[i].sendAway(199885805);
+			}
+		}
+
+	}
 
     //background(255);
     clear();
@@ -494,7 +521,7 @@ function draw() {
     fill(50, 200, 0)
 
     environment.daytime+=environment.daytimeSteps;
-    	if(environment.daytime>=100||environment.daytime<=0){
+    	if(environment.daytime>=150||environment.daytime<=-100){
     		environment.daytimeSteps*=-1;
     		environment.daytime+=environment.daytimeSteps*2;
     	}
@@ -511,6 +538,8 @@ function draw() {
 	    while(allCars.length<environment.simulation.carAmount){
 	    	//push cars from random cities
 	    	allCars.push(new Car(allCities[floor(random(0,allCities.length))]))
+	    	allCars[allCars.length-1].visible = false;
+	    	allCars[allCars.length-1].hometown.parkedCars.push(allCars[allCars.length-1]);
 
 	    }
 	}
