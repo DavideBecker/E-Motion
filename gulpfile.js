@@ -61,7 +61,7 @@ var dist = {
     'fonts': baseUrl + distUrl + 'fonts/',
 }
 
-var scriptPipe = [src.js + '**', '!' + src.js + vendorFolder + '**']
+var scriptPipe = [src.js + '**/*', '!' + src.js + vendorFolder + '**']
 
 function errorHandler(err) {
     console.log()
@@ -116,7 +116,7 @@ gulp.task('scripts:lint', function() {
 
 gulp.task('scripts', ['scripts:lint'], function() {
     gulp.src(scriptPipe)
-        // .pipe(sourcemaps.init())
+        .pipe(sourcemaps.init())
         // .pipe(concat(src.jsMain)).on('error', errorHandler)
         // .pipe(include({
         //     includePaths: [
@@ -126,11 +126,9 @@ gulp.task('scripts', ['scripts:lint'], function() {
         // .on('error', console.log)
         // .pipe(gulp.dest(dist.js))
         .pipe(babel()).on('error', errorHandler)
-        // .pipe(uglify().on('error', function(err) {
-        //     console.log('\n    ' + err.toString().replace(new RegExp('\n', 'g'), '\n    '));
-        // }))
-        // .pipe(sourcemaps.write('./'))
-        .pipe(gulp.dest(dist.js));
+        // .pipe(uglify()).on('error', errorHandler)
+        .pipe(sourcemaps.write('./'))
+        .pipe(gulp.dest(dist.js))
 
     gulp.src(src.js + vendorFolder + '/**').pipe(gulp.dest(dist.js + vendorFolder));
 });

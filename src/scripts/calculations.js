@@ -66,27 +66,6 @@ function convertTime(time, from, to) {
     return false;
 }
 
-function prettyPrintConfig() {
-    console.log('CONFIG');
-    console.log('   EMOTION');
-    console.log('      Capacity:              ', config.emotion.capacity, 'kWh');
-    console.log('      Charging speed:        ', config.emotion.chargeSpeed, 'kWh');
-    console.log('      Mileage:               ', config.emotion.mileage, 'kWh per 100 KM');
-    console.log('      Average driving speed: ', config.emotion.averageSpeed, 'km/h');
-    console.log('   CAR');
-    console.log('      Capacity:              ', config.car.capacity, 'kWh');
-    console.log('      Charging speed:        ', config.car.chargeSpeed, 'kWh');
-    console.log('      Mileage:               ', config.car.mileage, 'kWh per 100 KM');
-    console.log('   STATIC');
-    console.log('      Percentage of the capacity a truck charges each car:      ', config.chargePercentage * 100, '%');
-    console.log('   RANDOMIZED VALUES');
-    console.log('      Average distance a truck has to travel between charges:   ', config.averageDistanceBetweenCharges, 'm');
-    console.log('      Average distance between locations (villages etc):        ', config.averageDistanceToLocation, 'km');
-    console.log('      Average time a truck is driving around and charging cars: ', config.averageTruckUptime, 'hours');
-    console.log('      Average amount of cars that need to be charged each day:  ', config.averageCarsToChargePerDay, 'cars');
-    console.log('      Amount of trucks that are deployed:                       ', config.deployedTrucks, 'trucks');
-}
-
 function fineRound(number) {
     return Math.floor(number * 10) / 10
 }
