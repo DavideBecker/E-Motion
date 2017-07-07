@@ -180,3 +180,16 @@ gulp.task('clean', function() {
 gulp.task('default', function() {
     sequence('clean', ['styles', 'scripts', 'images', 'vectors', 'data', 'fonts']);
 })
+
+gulp.task('pages:clean', function() {
+    gulp.src('./docs/').pipe(clean());
+})
+
+gulp.task('pages:generate', function() {
+    gulp.src('index.html').pipe(gulp.dest('./docs/'))
+    gulp.src(baseUrl + distUrl + '**').pipe(gulp.dest('./docs/' + baseUrl + distUrl))
+})
+
+gulp.task('pages', function() {
+    sequence('pages:clean', 'pages:generate');
+})
