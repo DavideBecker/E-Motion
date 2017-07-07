@@ -902,7 +902,7 @@ function draw() {
 
 		SendCount = 0;
 
-		if(environment.daytime<0  && environment.daytime > -5 &&environment.daytimeSteps<0){
+		if(environment.daytime>50 && environment.daytimeSteps>0){
 			//console.log("daytime event")
 			for(var i = 0; i < allCities.length; i++){
 				//wallCities[i].parkedCars[allCities[i].parkedCars.length-1].moveStack = [];
