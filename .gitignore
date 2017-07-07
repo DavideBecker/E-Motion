@@ -62,4 +62,9 @@ typings/
 ### Project specific
 
 # Asset folder (Generate it yourself with 'gulp')
-assets/
+/assets/
+
+# Electron builds
+# You can use electron-packager
+# electron-packager ./ e-motion --all -overwrite --out=./builds
+builds/
