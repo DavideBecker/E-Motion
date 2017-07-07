@@ -21,6 +21,8 @@ class City extends Node {
     render() {
         fill(this.charge)
         ellipse(this.x, this.y, 10, 10)
+
+        ellipse(this.x * environment.scale, this.y * environment.scale, 20, 20)
     }
 
     update() {

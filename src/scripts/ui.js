@@ -1,19 +1,5 @@
 var stuttgart = Nodes.getByName('Stuttgart');
 
-function resizeCanvasShit() {
-    environment.scale = $(window).height() / 500
-
-    $(window).trigger('resize');
-}
-
-function mousePressed() {
-    Nodes.forAll((nodeIndex, node) => {
-        if(dist(mouseX, mouseY, node.x, node.y) < 5) {
-            console.log(nodeIndex);
-        }
-    })
-}
-
 function calculateCarsChargedPerTruck() {
     var chargingCapacity = calculateChargingCapacity(
         environment.simulation.static.truck.capacity,
@@ -112,8 +98,6 @@ function updateCalculations() {
 }
 
 $(document).ready(function() {
-    resizeCanvasShit()
-
     outputs = {
         chargesPerDay: {
             element: $('#chargesPerDay'),
@@ -151,6 +135,7 @@ $(document).ready(function() {
     $('#sidebar-toggle').click((event) => {
         event.preventDefault()
         $('body').toggleClass('nav-active');
+        window.dispatchEvent(new Event('resize'));
     })
 
     $('.param.draggable').each(function(i, el) {

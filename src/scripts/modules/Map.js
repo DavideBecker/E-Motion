@@ -1,10 +1,5 @@
 function renderMap(sketch) {
     function showMap(map) {
-        var canvas = map.createCanvas(map.windowWidth - $('#sidebar').width() + 100, map.windowHeight);
-
-        canvas.parent('canvas-wrapper');
-        map.rectMode(map.CENTER);
-
         Nodes.forAll(function(index, node) {
             for(var connectionIndex = 0; connectionIndex < node.connectedTo.length; connectionIndex++) {
                 var connectedNode = Nodes.getById(node.connectedTo[connectionIndex]);
@@ -19,7 +14,6 @@ function renderMap(sketch) {
                 );
             }
         })
-
     }
 
     sketch.windowResized = function() {
@@ -28,13 +22,11 @@ function renderMap(sketch) {
     }
 
     sketch.setup = function() {
-        var canvas = sketch.createCanvas(sketch.windowWidth - $('#sidebar').width() + 100, sketch.windowHeight);
+        sketch.rectMode(sketch.CENTER);
+        var canvas = sketch.createCanvas(500, 500);
 
         canvas.parent('canvas-wrapper');
-        sketch.rectMode(sketch.CENTER);
         resize(sketch)
         showMap(sketch)
     }
 }
-
-var staticMap = new p5(renderMap)

@@ -34,16 +34,17 @@ var cityIDsWithoutStuttgart = cityIDs.slice()
 
 cityIDsWithoutStuttgart.splice(cityIDs.indexOf(cityDict.Stuttgart), 1)
 
+var debugged = []
 
-function resize(canvas) {
-    canvas.resizeCanvas(canvas.windowWidth - $('#sidebar').width() + 100, canvas.windowHeight);
+function attatchDebugger(obj) {
+    debugged.push(obj)
 }
 
-function chargeToColor(charge) {
-    var hue = 120 * charge
-    var sat = abs(charge - 50) / 50
+function resize(canvas) {
+    var sidebarWidth = $('body').hasClass('nav-active') ? $('#sidebar').width() : 0
 
-    return(hsv2rgb(hue, sat, 1))
+    environment.scale = min(canvas.windowHeight / 500, (canvas.windowWidth - sidebarWidth) / 550);
+    canvas.resizeCanvas(canvas.windowWidth - sidebarWidth, canvas.windowHeight);
 }
 
 var hsv2rgb = function(h, s, v) {

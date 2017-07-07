@@ -24,7 +24,12 @@ class Car extends Vehicle {
 
         noStroke()
         fill(chargeToColor(this.charge / this.capacity))
-        rect(this.position.x, this.position.y, 10, 10)
+        rect(
+            this.position.x * environment.scale,
+            this.position.y * environment.scale,
+            environment.carSize,
+            environment.carSize
+        )
     }
 
     update() {

@@ -3,22 +3,28 @@ var testcar = 1
 function setup() {
     colorMode(HSB)
     frameRate(60)
+    rectMode(CENTER)
+    noStroke()
     var canvas = createCanvas(500, 500)
 
     canvas.parent('canvas-wrapper');
-    rectMode(CENTER)
-    // testcar = new Car()
-    // testcar.driveTo(Nodes.getRandomCity())
 
     resize(window)
 
-    for(var i = 0; i < 100; i++) {
-        new Car().driveTo(Nodes.getByName('Stuttgart'));
+    for(var i = 0; i < environment.simulation.carAmount; i++) {
+        var car = new Car()
+
+        car.enteredCity(car.home)
     }
 }
 
 var timer = 1;
 var daytimeCycle = 1;
+var staticMap = new p5(renderMap)
+
+function windowResized() {
+    resize(window)
+}
 
 function draw() {
     clear()
@@ -45,6 +51,8 @@ function draw() {
 
     // renderAllNodes()
 
-    showPathFor(cars[3])
+    // showPathFor(cars[0])
+
+    debugMagic();
 }
 
