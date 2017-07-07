@@ -47,33 +47,40 @@ function resize(canvas) {
     canvas.resizeCanvas(canvas.windowWidth - sidebarWidth, canvas.windowHeight);
 }
 
-var hsv2rgb = function(h, s, v) {
+function hsv2rgb(hue, saturation, vibrancy) {
     // adapted from http://schinckel.net/2012/01/10/hsv-to-rgb-in-javascript/
-    var rgb, i, data = [];
-    if (s === 0) {
-        rgb = [v,v,v];
+    var rgb, i,
+        data = [];
+
+    if(saturation === 0) {
+        rgb = [vibrancy, vibrancy, vibrancy];
     } else {
-        h = h / 60;
-        i = Math.floor(h);
-        data = [v*(1-s), v*(1-s*(h-i)), v*(1-s*(1-(h-i)))];
+        hue /= 60;
+
+        i = Math.floor(hue);
+        data = [
+            vibrancy * (1 - saturation),
+            vibrancy * (1 - saturation * (hue - i)),
+            vibrancy * (1 - saturation * (1 - (hue - i)))
+        ];
         switch (i) {
         case 0:
-            rgb = [v, data[2], data[0]];
+            rgb = [vibrancy, data[2], data[0]];
             break;
         case 1:
-            rgb = [data[1], v, data[0]];
+            rgb = [data[1], vibrancy, data[0]];
             break;
         case 2:
-            rgb = [data[0], v, data[2]];
+            rgb = [data[0], vibrancy, data[2]];
             break;
         case 3:
-            rgb = [data[0], data[1], v];
+            rgb = [data[0], data[1], vibrancy];
             break;
         case 4:
-            rgb = [data[2], data[0], v];
+            rgb = [data[2], data[0], vibrancy];
             break;
         default:
-            rgb = [v, data[0], data[1]];
+            rgb = [vibrancy, data[0], data[1]];
             break;
         }
     }
@@ -81,4 +88,11 @@ var hsv2rgb = function(h, s, v) {
     return '#' + rgb.map(function(x) {
         return ('0' + Math.round(x * 255).toString(16)).slice(-2);
     }).join('');
+}
+
+function chargeToColor(charge) {
+    var hue = 120 * charge
+    var sat = abs(charge - 50) / 50
+
+    return hsv2rgb(hue, sat, 1)
 }

@@ -1,8 +1,8 @@
 var testcar = 1
 
 function setup() {
-    colorMode(HSB)
     frameRate(60)
+    colorMode(HSB)
     rectMode(CENTER)
     noStroke()
     var canvas = createCanvas(500, 500)
@@ -29,7 +29,9 @@ function windowResized() {
 function draw() {
     clear()
 
-    environment.daytime = environment.dayDuration / timer % environment.dayDuration;
+    environment.daytime = timer % environment.dayDuration / environment.dayDuration;
+
+    // console.log(environment.daytime)
 
     for(var carIndex = 0; carIndex < cars.length; carIndex++) {
         var car = cars[carIndex];
@@ -40,11 +42,27 @@ function draw() {
     for(var cityIndex = 0; cityIndex < cities.length; cityIndex++) {
         var city = cities[cityIndex];
 
+        if(events.driveHome && city.id == cityDict.Stuttgart) {
+            city.sendCarHome()
+        }
+
+        if(events.driveToCenter && city.id != cityDict.Stuttgart) {
+            city.sendCarTo(Nodes.getByName('Stuttgart'))
+        }
+
         city.update()
     }
 
-    if(environment.daytime && stuttgart.parkedCars.length) {
-        stuttgart.sendCarHome()
+    if(environment.daytime > 0.5) {
+        events.driveHome = true
+    } else {
+        events.driveHome = false
+    }
+
+    if(environment.daytime > 0.1 && environment.daytime < 0.4) {
+        events.driveToCenter = true
+    } else {
+        events.driveToCenter = false
     }
 
     timer += 1;

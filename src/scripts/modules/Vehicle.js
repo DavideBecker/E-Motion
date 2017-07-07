@@ -7,12 +7,25 @@ class Vehicle {
         this.position = createVector(0, 0);
         this.velocity = createVector(0, 0);
         this.charge = 1;
+        this.discharge = 0.012
+    }
+
+    getChargePercentage() {
+        return this.charge / this.capacity
     }
 
     planPath() {
         var detour = Nodes.getRandomNode()
 
-        return graph.findShortestPath(this.location.id, detour.id).concat(graph.findShortestPath(detour.id, this.target.id))
+        return graph.findShortestPath(
+            this.location.id,
+            detour.id
+        ).concat(
+            graph.findShortestPath(
+                detour.id,
+                this.target.id
+            )
+        )
     }
 
     stop() {
@@ -37,14 +50,16 @@ class Vehicle {
         } else {
             this.stop()
             this.inCity = true;
+            this.location = this.target;
             if(this.target.isCity) {
-                this.target.parkedCars.push(this)
+                this.enteredCity(this.target)
             }
         }
     }
 
     driveTo(node) {
         this.target = node;
+        // console.log(this, 'is driving from', cityDict[this.location.id], 'to', cityDict[this.target.id])
         this.moveStack = this.planPath()
         this.isDriving = true;
         this.inCity = false;
@@ -62,7 +77,7 @@ class Vehicle {
 
         if(this.isDriving) {
 
-            this.charge -= 0.1
+            this.charge -= this.discharge
 
             if(this.charge <= 0) {
                 this.charge = 0
@@ -75,5 +90,17 @@ class Vehicle {
         } else {
             this.stop()
         }
+    }
+
+    enteredCity(city) {
+        city.parkedCars.push(this)
+        city.updateAverageCharge(this.getChargePercentage())
+        this.inCity = true
+    }
+
+    leftCity(city) {
+        city.parkedCars.splice(city.parkedCars.indexOf(this), 1)
+        city.updateAverageCharge(-this.getChargePercentage())
+        this.inCity = false
     }
 }

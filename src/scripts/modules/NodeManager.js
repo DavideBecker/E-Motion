@@ -15,15 +15,15 @@ class NodeManager {
     }
 
     getRandomNode() {
-        return this.nodes[nodeIDs[floor(random(0, nodeIDs.length - 1))]]
+        return this.nodes[nodeIDs[floor(random(0, nodeIDs.length))]]
     }
 
     getRandomTown() {
-        return this.nodes[cityIDsWithoutStuttgart[floor(random(0, cityIDsWithoutStuttgart.length - 1))]]
+        return this.nodes[cityIDsWithoutStuttgart[floor(random(0, cityIDsWithoutStuttgart.length))]]
     }
 
     getRandomCity() {
-        return this.nodes[cityIDs[floor(random(0, cityIDs.length - 1))]]
+        return this.nodes[cityIDs[floor(random(0, cityIDs.length))]]
     }
 
     forAll(func) {

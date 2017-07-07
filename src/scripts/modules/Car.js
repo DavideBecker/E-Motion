@@ -4,12 +4,10 @@ class Car extends Vehicle {
 
         this.home = Nodes.getRandomTown();
         this.location = this.home;
-        console.log(this.home, this.location);
         this.position = createVector(this.location.x, this.location.y);
         this.capacity = 24
         this.charge = this.capacity;
-
-        console.log('Hometown: ', cityDict[this.home.id])
+        this.type = 'car'
 
         cars.push(this);
     }
@@ -19,8 +17,9 @@ class Car extends Vehicle {
     }
 
     render() {
-        if(this.inCity)
+        if(this.inCity) {
             return
+        }
 
         noStroke()
         fill(chargeToColor(this.charge / this.capacity))

@@ -1,13 +1,15 @@
 var environment = {
     timeline: 0,
     daytime: 0,
-    dayDuration: 500,
+    dayDuration: 5000,
     scale: 1,
+
+    carSize: 10,
 
     simulation: {
         truckAmount: 20,
         truckUptime: 6, // h
-        carAmount: 10,
+        carAmount: 80,
         carChargeLimit: 0.25, // %
         averageCarCharge: 0.5,
 
@@ -32,3 +34,7 @@ var environment = {
 var cars = []
 var graph = new Graph(nodeGraph)
 
+var events = {
+    driveToCenter: false,
+    driveHome: false,
+}
