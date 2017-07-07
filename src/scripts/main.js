@@ -22,9 +22,9 @@ var environment = {
     simulation: {
         truckAmount: 20,
         truckUptime: 6, // h
-        carAmount: 10,
+        carAmount: 100,
         carChargeLimit: 0.25, // %
-        averageCarCharge: 0.5,
+        averageCarCharge: 1,
 
         static: {
             truck: {
@@ -478,7 +478,7 @@ class Car{
         	}
 
 
-        	this.energy -= this.milage/400;
+        	this.energy -= this.milage/700;
             //move first, think later
             //console.log("moved from "+this.currPos.x+" "+this.currPos.y+" to: "+this.currPos.x+this.moveDir.x+" "+this.currPos.y+this.moveDir.y)
 
@@ -840,7 +840,7 @@ class Emotion{
 	charge(){
 
 		if(this.isCharging == true){
-			for(var i = 0; i<this.currentlyCharging.park:edCars.length; i++	){
+			for(var i = 0; i<this.currentlyCharging.parkedCars.length; i++	){
 					this.currentlyCharging.parkedCars[i].energy*=1.005; //2
 					this.currentlyCharging.parkedCars[i].energy=constrain(this.currentlyCharging.parkedCars[i].energy,0,environment.simulation.static.car.capacity);
 
@@ -911,7 +911,7 @@ function draw() {
 			}
 		}
 
-		if(environment.daytime<0 && environment.daytimeSteps>-5){
+		if(environment.daytime<0  && environment.daytime > -5 &&environment.daytimeSteps<0){
 			//console.log("daytime event")
 			for(var i = 0; i < allEmotions.length; i++){
 				//wallCities[i].parkedCars[allCities[i].parkedCars.length-1].moveStack = [];
@@ -1070,6 +1070,7 @@ function calulateMaxTruckUptime() {
 }
 
 var outputs
+var averageUpdateTimer
 
 function updateCalculations() {
     for (var outputId in outputs) {
@@ -1207,4 +1208,19 @@ $(document).ready(function () {
     $('.update-sim').change(function () {
         updateCalculations()
     })
+
+    function updateAverageCharge() {
+        var val = $('#average-charge > .amount')
+        var bar = $('#average-charge > .bar > .progress')
+        var per = Math.round(environment.simulation.averageCarCharge * 100)
+
+        val.html(per + '%')
+        bar.width(per + '%')
+    }
+
+    updateAverageCharge()
+
+    averageUpdateTimer = window.setInterval(function() {
+        updateAverageCharge()
+    }, 100)
 })

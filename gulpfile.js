@@ -114,7 +114,7 @@ gulp.task('scripts:lint', function() {
         }))
 })
 
-gulp.task('scripts', ['scripts:lint'], function() {
+gulp.task('scripts', function() {
     gulp.src(scriptPipe)
         // .pipe(sourcemaps.init())
         // .pipe(concat(src.jsMain)).on('error', errorHandler)
