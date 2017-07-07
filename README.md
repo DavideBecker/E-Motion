@@ -23,12 +23,13 @@ This project contains a very strict eslint config. Install an eslint linter for 
 
 ### Gulp tasks
 All tasks that alter files in `/src/` output to `assets`
+
 | Command | Action |
-|---|---|
+|-----|-----|
 | `gulp styles` | Compiles `/src/styles/main.sass` |
-| `gulp scripts:lint` | Lints all scripts in `/src/scripts/` except the vendor folder
+| `gulp scripts:lint` | Lints all scripts in `/src/scripts/` except the vendor folder |
 | `gulp scripts` | Pipes all scripts in `/src/scripts/` through babel and uglifies them. Also runs `scripts:lint` |
-| `gulp images` | Minifies all images in `/src/images/`
+| `gulp images` | Minifies all images in `/src/images/` |
 | `gulp vectors` | Moves all files in `/src/vectors/` |
 | `gulp data` | Moves all files in `/src/data/` |
 | `gulp fonts` | Moves all files in `/src/fonts/` |
