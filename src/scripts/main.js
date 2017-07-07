@@ -13,14 +13,15 @@ var stuttgart;
 var allEmotions = [];
 
 
+
 var environment = {
     timeline: 0,
     daytime: 0,
-    daytimeSteps: 0.1,
+    daytimeSteps: 0.1	,
     scale: 1,
 
     simulation: {
-        truckAmount: 20,
+        truckAmount: 6,
         truckUptime: 6, // h
         carAmount: 10,
         carChargeLimit: 0.25, // %
@@ -80,6 +81,18 @@ class City{
 
 	}
 	draw(){
+
+	}
+
+	getAverageEnergy(){
+
+		var energy = 0;
+		if(this.parkedCars.lenth==0){return 1};
+		for(var i = 0; i<this.parkedCars.length;i++){
+		energy+=(this.parkedCars[i].energy/this.parkedCars[i].maxEnergy);
+		}
+		return	energy/=this.parkedCars.length;
+
 
 	}
 
@@ -174,7 +187,7 @@ function createCities(){
 function renderMap(sketch) {
     var showMap = function(sketch) {
         sketch.rectMode(sketch.CENTER);
-        var canvas = sketch.createCanvas(sketch.windowWidth - $('#sidebar').width() + 100, sketch.windowHeight);
+        var canvas = sketch.createCanvas(sketch.windowWidth - $('#sidebar').width(), sketch.windowHeight - 3);
         //sketch.frameRate(1);
         canvas.parent('canvas-wrapper');
 
@@ -211,12 +224,12 @@ function renderMap(sketch) {
             // ellipse(node.x * environment.scale, node.y * environment.scale, 10, 10);
         }
 
-        // for(var i = 0; i < allCities.length; i++){
-        // 	fill(allCities[i].getColor());
-        // 	ellipse(allCities[i].node.x*environment.scale,allCities[i].node.y*environment.scale,18,18);
-        // }
-        // 	fill(stuttgart.getColor());
-        // 	ellipse(stuttgart.node.x*environment.scale,stuttgart.node.y*environment.scale,30,30);
+        for(var i = 0; i < allCities.length; i++){
+        	fill(allCities[i].getColor());
+        	ellipse(allCities[i].node.x,allCities[i].node.y,18,18);
+        }
+        	fill(stuttgart.getColor());
+        	ellipse(stuttgart.node.x,stuttgart.node.y,30,30);
 
         // for(var nodeIndex in nodes) {
         //     var node = nodes[nodeIndex];
@@ -241,7 +254,7 @@ function renderMap(sketch) {
     	//sketch.frameRate(30);
     	sketch.clear();
     	sketch.fill(getBackgroundColor());
-    	sketch.rect(0, 0,sketch.windowWidth * 2,sketch.windowHeight * 2);
+    	sketch.rect(-10,-10,1920,1080);
     	if(BackgroundCounter%60==0||true){
     		BackgroundCounter=0;
 
@@ -280,26 +293,26 @@ function renderMap(sketch) {
         }
  		 for(var i = 0; i < allCities.length; i++){
         	fill(allCities[i].getColor());
-        	ellipse(allCities[i].node.x*environment.scale,allCities[i].node.y*environment.scale,18,18);
+        	ellipse(allCities[i].node.x,allCities[i].node.y,18,18);
         }
         	fill(stuttgart.getColor());
-        	ellipse(stuttgart.node.x*environment.scale,stuttgart.node.y*environment.scale,50,50);
+        	ellipse(stuttgart.node.x,stuttgart.node.y,50,50);
     }
 
 
-}
     sketch.windowResized = function () {
-        sketch.resizeCanvas(sketch.windowWidth - $('#sidebar').width() + 100, sketch.windowHeight);
+        sketch.resizeCanvas(sketch.windowWidth - $('#sidebar').width(), sketch.windowHeight - 3);
         showMap(sketch)
     }
 
     sketch.setup = function () {
-        var canvas = sketch.createCanvas(sketch.windowWidth - $('#sidebar').width() + 100, sketch.windowHeight);
+        var canvas = sketch.createCanvas(sketch.windowWidth - $('#sidebar').width(), sketch.windowHeight - 3);
         sketch.rectMode(sketch.CENTER);
         //sketch.frameRate(1);
         canvas.parent('canvas-wrapper');
         showMap(sketch)
     }
+}
  	
 }
 
@@ -344,18 +357,13 @@ function setup() {
 			    // frameRate(1)
 			    canvas.parent('canvas-wrapper')
 			    console.log("finished setup");
-    rectMode(CENTER);
-    var canvas = createCanvas(windowWidth - $('#sidebar').width() + 100, windowHeight);
-    // frameRate(1)
-    canvas.parent('canvas-wrapper')
-    console.log("finished setup");
 }
 
 
 
 
 function windowResized() {
-    resizeCanvas(windowWidth - $('#sidebar').width() + 100, windowHeight);
+    resizeCanvas(windowWidth - $('#sidebar').width(), windowHeight - 3);
 }
 
 // console.log(nodes);
@@ -702,7 +710,9 @@ class Emotion{
     	this.currCity.parkedCars.pop();
     	this.startMoveWithoutPathfinder(graph.findShortestPath(this.toNode.id,this.hometown.nodeID));
     }
+
     startCharging(){
+    		this.energy = this.maxEnergy;
     		this.isCharging	= false;
     		this.visible = true;
 
@@ -721,7 +731,7 @@ class Emotion{
         	*/
 
 
-        	this.energy -= this.milage/500;
+        	this.energy -= this.milage/1000;
             //move first, think later
             //console.log("moved from "+this.currPos.x+" "+this.currPos.y+" to: "+this.currPos.x+this.moveDir.x+" "+this.currPos.y+this.moveDir.y)
             
@@ -840,12 +850,12 @@ class Emotion{
 
 		if(this.isCharging == true){
 			for(var i = 0; i<this.currentlyCharging.parkedCars.length; i++	){
-					this.currentlyCharging.parkedCars[i].energy*=2;
+					this.currentlyCharging.parkedCars[i].energy*=1.002; //2
 					this.currentlyCharging.parkedCars[i].energy=constrain(this.currentlyCharging.parkedCars[i].energy,0,environment.simulation.static.car.capacity);
 
 			}
 			this.chargingCounter++;
-			if(this.chargingCounter	==60){
+			if(this.chargingCounter	> 30 && this.currentlyCharging.getAverageEnergy()>environment.simulation.carChargeLimit){
 				this.chargingCounter= 0;
 
 				console.log("eine sec rum");
@@ -910,7 +920,9 @@ function draw() {
 			}
 		}
 
-		if(environment.daytime<0 && environment.daytimeSteps>-5){
+
+		//if(environment.daytime<0  && environment.daytimeSteps > -5){
+		if(environment.daytime<0  && environment.daytime > -5 &&environment.daytimeSteps<0){
 			//console.log("daytime event")
 			for(var i = 0; i < allEmotions.length; i++){
 				//wallCities[i].parkedCars[allCities[i].parkedCars.length-1].moveStack = [];
@@ -1014,14 +1026,9 @@ function draw() {
     
     //testCar.move();
     //testCar.draw();
+    
+
 }
-
-function resizeCanvasShit() {
-    environment.scale = $(window).height() / 500
-
-    $(window).trigger('resize');
-}
-
 function mousePressed(){
     for(var nodeIndex in nodes){
         if(dist(mouseX,mouseY,nodes[nodeIndex].x,nodes[nodeIndex].y)<5){
@@ -1079,8 +1086,6 @@ function updateCalculations() {
 }
 
 $(document).ready(function () {
-    resizeCanvasShit()
-
     outputs = {
         chargesPerDay: {
             element: $('#chargesPerDay'),
@@ -1109,11 +1114,6 @@ $(document).ready(function () {
     }
 
     updateCalculations()
-
-    $('#truckAmount').val(environment.simulation.truckAmount);
-    $('#truckUptime').val(environment.simulation.truckUptime);
-    $('#carAmount').val(environment.simulation.carAmount);
-    $('#carChargeLimit').val(environment.simulation.carChargeLimit);
 
     $('#sidebar-toggle').click((event) => {
         event.preventDefault()
