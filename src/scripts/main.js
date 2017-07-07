@@ -23,9 +23,9 @@ var environment = {
     simulation: {
         truckAmount: 6,
         truckUptime: 6, // h
-        carAmount: 10,
+        carAmount: 100,
         carChargeLimit: 0.25, // %
-        averageCarCharge: 0.5,
+        averageCarCharge: 1,
 
         static: {
             truck: {
@@ -57,10 +57,10 @@ var graph = new Graph(nodeGraph);
 graph.findCoolerPath = function(from,to){
     var umwegnode1 = allKeys[floor(random(0,allKeys.length))]
     var umwegnode2 = allKeys[floor(random(0,allKeys.length))]
-    
+
     return graph.findShortestPath(from,umwegnode1).concat(graph.findShortestPath(umwegnode1,to));
 }
-	
+
 
 // console.log(graph.findShortestPath('4341680', '152748987'))
 
@@ -101,13 +101,13 @@ class City{
 		if(this.parkedCars.length>0){
 
 		this.parkedCars[this.parkedCars.length-1].visible = true;
-		this.parkedCars.pop().startMoveWithoutPathfinder(graph.findCoolerPath(this.nodeID,to)); 
-		
+		this.parkedCars.pop().startMoveWithoutPathfinder(graph.findCoolerPath(this.nodeID,to));
+
 		}
 	}
 	getColor(){
 		var energy = 0;
-		
+
 		if(this.parkedCars.length <1){
 			return color(120,120,120);
 		}
@@ -128,10 +128,10 @@ class City{
 			r = map(input,100,200,242,39);
 			g = map(input,100,200,153,174);
 			b = map(input,100,200,74,96);
-				} 
+				}
 
-				var temp=color(r,g,b); 
-			return temp;	
+				var temp=color(r,g,b);
+			return temp;
   		}
 
 
@@ -247,7 +247,7 @@ function renderMap(sketch) {
         //     }
         // }
     }
-    
+
        	//experimental
     sketch.draw = function(){
     	BackgroundCounter++;
@@ -258,7 +258,7 @@ function renderMap(sketch) {
     	if(BackgroundCounter%60==0||true){
     		BackgroundCounter=0;
 
-    		
+
     	for(var nodeIndex in nodes) {
             var node = nodes[nodeIndex];
 
@@ -313,7 +313,7 @@ function renderMap(sketch) {
         showMap(sketch)
     }
 }
- 	
+
 }
 
 
@@ -340,11 +340,11 @@ function setup() {
 				console.log(environment.simulation.carAmount);
 
 				for(var i = 0 ; i <  environment.simulation.carAmount ; i++){
-					
+
 					allCars[i]=new Car( allCities[floor(random(0,allCities.length))]);
 					allCars[i].visible = false;
 					allCars[i].hometown.parkedCars.push(allCars[i]);
-					//allCars[i].hometown 
+					//allCars[i].hometown
 					console.log(allCars[i].hometown);
 
 					//allCars[i].startMoveWithoutPathfinder(graph.findCoolerPath( allCars[i].hometown.node.id ,  allKeys[floor(random(0,allKeys.length-1))]  ))
@@ -401,19 +401,19 @@ class Car{
         this.currPos={
             x:0,
             y:0
-        
+
         }
 
         this.currPos.x = this.hometown.node.x;
         this.currPos.y = this.hometown.node.y;
-        
+
 
         //aus meinem alten Auto
         this.moving = false;
         this.moveDir = createVector(0,0);
         this.currentStep;
         this.stepsNeeded;
-        this.speed = 1; 
+        this.speed = 1;
 
         this.stuck = false;
         this.currCity;
@@ -424,7 +424,7 @@ class Car{
 
         }
     getColor(){
-    		
+
 		var input = constrain(map(this.energy,0,this.maxEnergy,0,200),0,200);
 		var r,g,b;
 		r = map(input,0,100,235,242);
@@ -436,22 +436,22 @@ class Car{
 			r = map(input,100,200,242,39);
 			g = map(input,100,200,153,174);
 			b = map(input,100,200,74,96);
-				} 
+				}
 
-				var temp=color(r,g,b); 
-			this.color = temp;	
+				var temp=color(r,g,b);
+			this.color = temp;
   		}
 
 
     draw(){
-        
+
        if(this.visible){
-        	
+
 			/*
 			rect(0,0,10,10);
         	push();
         	rectMode(CENTER);
-            
+
             rotate(this.moveDir.heading());
             translate(this.currPos.x,this.currPos.y);
             pop();
@@ -470,7 +470,7 @@ class Car{
         // image(this.image,this.currPos.x,this.currPos.y);
         // */
         }
-    }   
+    }
     goHome(){
     	this.visible = true;
     	this.currCity.parkedCars.pop();
@@ -486,10 +486,10 @@ class Car{
         	}
 
 
-        	this.energy -= this.milage/1000;
+        	this.energy -= this.milage/700;
             //move first, think later
             //console.log("moved from "+this.currPos.x+" "+this.currPos.y+" to: "+this.currPos.x+this.moveDir.x+" "+this.currPos.y+this.moveDir.y)
-            
+
  			if(!this.stuck){
             this.currPos.x+=this.moveDir.x;
             this.currPos.y+=this.moveDir.y;
@@ -497,7 +497,7 @@ class Car{
         	}
             //check if it reached a Node;
 
-           
+
             if(this.stepsNeeded-1<this.currentStep){
 
                 //check if its not the targetNode
@@ -507,7 +507,7 @@ class Car{
                     //stop Moving and get on the exact position of the Node
                     //to hide behind it
                     //console.log("the car reached the target");
-                   
+
                    var inCity = false;
                    var cityNum = 0;
                    for(var i = 0; i < allCities.length;i++){
@@ -535,32 +535,32 @@ class Car{
                     this.moving = false;
                     this.currPos.x = this.toNode.x;
                     this.currPos.y = this.toNode.y;
-                   
 
 
-                    //console.log(this.toNode)	
 
-    			
+                    //console.log(this.toNode)
+
+
                		//this.startMoveWithoutPathfinder(graph.findCoolerPath(this.toNode.id,extremelyTemp));
-	                    
+
                 }
-                
+
                 else{
 
 
-                    //move to the next Node 
-                    
+                    //move to the next Node
+
                     this.startShortMove(this.toNode.id,this.moveStack.shift());
 
                 }
 
 
             }
-        
+
 
         }
 
-    }   
+    }
 
 
     startShortMove(from,to){
@@ -570,15 +570,15 @@ class Car{
         this.currPos.y = nodes[from].y;
         this.moveDir.set(nodes[to].x-nodes[from].x,nodes[to].y-nodes[from].y);
         var steps = dist(nodes[from].x,nodes[from].y,nodes[to].x,nodes[to].y);
-        
+
         //console.log("this car will take "+round(steps)+" frames to move between the nodes");
-        
+
         //sets values
         this.toNode = nodes[to];
         this.stepsNeeded = round(steps)/this.speed;
         this.currentStep = 0;
         this.moveDir.div(round(steps));
-        this.moveDir.mult(this.speed);  
+        this.moveDir.mult(this.speed);
 
 
         // console.log(this.moveStack);
@@ -589,7 +589,7 @@ class Car{
 
 
     startMoveWithoutPathfinder(moveArray){
-        
+
         this.currPos.x = nodes[moveArray[moveArray.length-1]].x;
         this.currPos.y = nodes[moveArray[moveArray.length-1]].y;
 
@@ -629,19 +629,19 @@ class Emotion{
         this.currPos={
             x:0,
             y:0
-        
+
         }
 
         this.currPos.x = this.hometown.node.x;
         this.currPos.y = this.hometown.node.y;
-        
+
 
         //aus meinem alten Auto
         this.moving = false;
         this.moveDir = createVector(0,0);
         this.currentStep;
         this.stepsNeeded;
-        this.speed = 2; 
+        this.speed = 2;
 
         this.stuck = false;
         this.currCity;
@@ -649,16 +649,16 @@ class Emotion{
         this.image;
         this.moveStack = [];
         this.visible = false;
-        this.isCharging = false;	
+        this.isCharging = false;
 
 		this.milage =22;
 		this.maxEnergy	= 400;
-		this.energy = 400; 
-		this.currentlyCharging  =allCities[0];  	
-		this.chargingCounter = 0;	
+		this.energy = 400;
+		this.currentlyCharging  =allCities[0];
+		this.chargingCounter = 0;
         }
     getColor(){
-    		
+
 		var input = constrain(map(this.energy,0,this.maxEnergy,0,200),0,200);
 		var r,g,b;
 		r = map(input,0,100,235,242);
@@ -670,18 +670,18 @@ class Emotion{
 			r = map(input,100,200,242,39);
 			g = map(input,100,200,153,174);
 			b = map(input,100,200,74,96);
-				} 
+				}
 
-				var temp=color(r,g,b); 
-			this.color = temp;	
+				var temp=color(r,g,b);
+			this.color = temp;
   		}
 
 
 
     draw(){
-        
+
        if(this.visible){
-   
+
             if( round(this.energy/0.25)*0.25!= round(this.tempEnergy/0.25)*0.25){
            		this.getColor();
            		this.tempEnergy=this.energy;
@@ -692,19 +692,19 @@ class Emotion{
             noStroke()
             fill(getStreetColor());
             rect(this.currPos.x*environment.scale, this.currPos.y*environment.scale, 18,18);
-            
+
             fill(this.color);
             rect(this.currPos.x*environment.scale, this.currPos.y*environment.scale, 16,16);
-            
+
             fill(getStreetColor()	);
             rect(this.currPos.x*environment.scale, this.currPos.y*environment.scale, 10,10);
-            
+
 
         // /*
         // image(this.image,this.currPos.x,this.currPos.y);
         // */
         }
-    }   
+    }
     goHome(){
     	this.visible = true;
     	this.currCity.parkedCars.pop();
@@ -734,7 +734,7 @@ class Emotion{
         	this.energy -= this.milage/500;
             //move first, think later
             //console.log("moved from "+this.currPos.x+" "+this.currPos.y+" to: "+this.currPos.x+this.moveDir.x+" "+this.currPos.y+this.moveDir.y)
-            
+
  			if(!this.stuck){
             this.currPos.x+=this.moveDir.x;
             this.currPos.y+=this.moveDir.y;
@@ -742,7 +742,7 @@ class Emotion{
         	}
             //check if it reached a Node;
 
-           
+
             if(this.stepsNeeded-1<this.currentStep){
 
                 //check if its not the targetNode
@@ -752,17 +752,17 @@ class Emotion{
                     //stop Moving and get on the exact position of the Node
                     //to hide behind it
                     //console.log("the car reached the target");
-                   
+
                    var inCity = false;
                    var cityNum = 0;
                    for(var i = 0; i < allCities.length;i++){
-                   	
+
                    		if(this.toNode.id == allCities[i].nodeID){
-                   	
+
                    			inCity = true;
-                   	
+
                    		cityNum  = i;
-                   		
+
                    		}
                    }
 
@@ -779,32 +779,32 @@ class Emotion{
                     this.moving = false;
                     this.currPos.x = this.toNode.x;
                     this.currPos.y = this.toNode.y;
-                   
 
 
-                    //console.log(this.toNode)	
 
-    			
+                    //console.log(this.toNode)
+
+
                		//this.startMoveWithoutPathfinder(graph.findCoolerPath(this.toNode.id,extremelyTemp));
-	                    
+
                 }
-                
+
                 else{
 
 
-                    //move to the next Node 
-                    
+                    //move to the next Node
+
                     this.startShortMove(this.toNode.id,this.moveStack.shift());
 
                 }
 
 
             }
-        
+
 
         }
 
-    }   
+    }
 
 
     startShortMove(from,to){
@@ -814,15 +814,15 @@ class Emotion{
         this.currPos.y = nodes[from].y;
         this.moveDir.set(nodes[to].x-nodes[from].x,nodes[to].y-nodes[from].y);
         var steps = dist(nodes[from].x,nodes[from].y,nodes[to].x,nodes[to].y);
-        
+
         //console.log("this car will take "+round(steps)+" frames to move between the nodes");
-        
+
         //sets values
         this.toNode = nodes[to];
         this.stepsNeeded = round(steps)/this.speed;
         this.currentStep = 0;
         this.moveDir.div(round(steps));
-        this.moveDir.mult(this.speed);  
+        this.moveDir.mult(this.speed);
 
 
         // console.log(this.moveStack);
@@ -834,7 +834,7 @@ class Emotion{
 
 
     startMoveWithoutPathfinder(moveArray){
-        
+
         this.currPos.x = nodes[moveArray[moveArray.length-1]].x;
         this.currPos.y = nodes[moveArray[moveArray.length-1]].y;
         this.hometown = stuttgart;
@@ -850,7 +850,7 @@ class Emotion{
 
 		if(this.isCharging == true){
 			for(var i = 0; i<this.currentlyCharging.parkedCars.length; i++	){
-					this.currentlyCharging.parkedCars[i].energy*=1.002; //2
+					this.currentlyCharging.parkedCars[i].energy*=1.005; //2
 					this.currentlyCharging.parkedCars[i].energy=constrain(this.currentlyCharging.parkedCars[i].energy,0,environment.simulation.static.car.capacity);
 
 			}
@@ -862,10 +862,10 @@ class Emotion{
 
 				if(environment.daytime<0){
 						var zu = allCities[floor(random(0,allCities.length))];
-							
+
 							while(this.currentlyCharging.node.id == zu.node.id){
 
-								 zu = allCities[floor(random(0,allCities.length))]; 
+								 zu = allCities[floor(random(0,allCities.length))];
 
 							}
 							console.log(this);
@@ -874,7 +874,7 @@ class Emotion{
 						this.isMoving   = false;
 						this.startMoveWithoutPathfinder(graph.findShortestPath( this.currentlyCharging.node.id ,zu.node.id ));
 				}
-				
+
 				else{
 					this.isCharging	 = false;
 					this.startMoveWithoutPathfinder(graph.findShortestPath(this.currentlyCharging.node.id,stuttgart.node.id));
@@ -900,17 +900,17 @@ function draw() {
 
 		AverageCount++;
 		if(AverageCount	%300 ==0){
-			environment.simulation.averageCarCharge	= getAverageCarEnergy();		
+			environment.simulation.averageCarCharge	= getAverageCarEnergy();
 		}
 
 
 	SendCount++;
 
-	if(SendCount % 5 == 0 ){ 
+	if(SendCount % 5 == 0 ){
 		//console.log("send event");
-	
+
 		SendCount = 0;
-	
+
 		if(environment.daytime>50 && environment.daytimeSteps>0){
 			//console.log("daytime event")
 			for(var i = 0; i < allCities.length; i++){
@@ -918,9 +918,9 @@ function draw() {
 				allCities[i].sendAway(199885805);
 
 			}
+
 		}
-
-
+		if(environment.daytime<0  && environment.daytime > -5 &&environment.daytimeSteps<0){
 		//if(environment.daytime<0  && environment.daytimeSteps > -5){
 		if(environment.daytime<0  && environment.daytime > -5 &&environment.daytimeSteps<0){
 			//console.log("daytime event")
@@ -940,7 +940,7 @@ function draw() {
 	   if (stuttgart.parkedCars.length>0){
 	   	var tomp = stuttgart.parkedCars[stuttgart.parkedCars.length-1];
 	   	//console.log(tomp);
-		//stuttgart.sendAway(stuttgart.parkedCars[stuttgart.parkedCars.length-1].hometown.nodeID);	
+		//stuttgart.sendAway(stuttgart.parkedCars[stuttgart.parkedCars.length-1].hometown.nodeID);
 		//stuttgart.parkedCars.pop().goHome();
 		tomp.moveStack = [];
 		tomp.goHome();
@@ -953,7 +953,7 @@ function draw() {
     clear();
 
    //fill(51)
-    
+
     fill(50, 200, 0)
 
     environment.daytime+=environment.daytimeSteps;
@@ -966,10 +966,10 @@ function draw() {
 
     //check amount of cars
 
-    	
+
     if(allCars.length!=environment.simulation.carAmount){
 	    while(allCars.length>environment.simulation.carAmount){
-	    	allCars.pop();	
+	    	allCars.pop();
 	    }
 	    while(allCars.length<environment.simulation.carAmount){
 	    	//push cars from random cities
@@ -981,13 +981,13 @@ function draw() {
 	}
 	 if(allEmotions.length!=environment.simulation.truckAmount){
 	    while(allEmotions.length>environment.simulation.truckAmount){
-	    	allEmotions.pop();	
+	    	allEmotions.pop();
 	    }
 	    while(allEmotions.length<environment.simulation.truckAmount){
 	    	//push cars from random cities
 	    	allEmotions.push(new Emotion(stuttgart));
 	    	allEmotions[allEmotions.length-1].visible = false;
-	    	
+
 	    	//allEmotions[allEmotions.length-1].hometown.parkedCars.push(allCars[allCars.length-1]);
 
 	    }
@@ -997,20 +997,20 @@ function draw() {
 
     //draw all cars
     for(var i = 0; i < allCars.length; i++){
-        
+
         allCars[i].move();
         allCars[i].draw();
-    
-    }   
+
+    }
 
     for(var i = 0; i<allEmotions.length;i++){
-    	
+
     	allEmotions[i].charge();
     	allEmotions[i].move();
     	allEmotions[i].draw();
 
     }
-    
+
 
 
 
@@ -1023,7 +1023,7 @@ function draw() {
     //      allCars[allCars.length-1].startMoveWithoutPathfinder(graph.findCoolerPath(46207908,4341680));
     // }
 
-    
+
     //testCar.move();
     //testCar.draw();
     
@@ -1076,6 +1076,7 @@ function calulateMaxTruckUptime() {
 }
 
 var outputs
+var averageUpdateTimer
 
 function updateCalculations() {
     for (var outputId in outputs) {
@@ -1206,4 +1207,19 @@ $(document).ready(function () {
     $('.update-sim').change(function () {
         updateCalculations()
     })
+
+    function updateAverageCharge() {
+        var val = $('#average-charge > .amount')
+        var bar = $('#average-charge > .bar > .progress')
+        var per = Math.round(environment.simulation.averageCarCharge * 100)
+
+        val.html(per + '%')
+        bar.width(per + '%')
+    }
+
+    updateAverageCharge()
+
+    averageUpdateTimer = window.setInterval(function() {
+        updateAverageCharge()
+    }, 100)
 })
