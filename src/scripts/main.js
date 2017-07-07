@@ -486,7 +486,7 @@ class Car{
         	}
 
 
-        	this.energy -= this.milage/400;
+        	this.energy -= this.milage/1000;
             //move first, think later
             //console.log("moved from "+this.currPos.x+" "+this.currPos.y+" to: "+this.currPos.x+this.moveDir.x+" "+this.currPos.y+this.moveDir.y)
             
@@ -731,7 +731,7 @@ class Emotion{
         	*/
 
 
-        	this.energy -= this.milage/1000;
+        	this.energy -= this.milage/500;
             //move first, think later
             //console.log("moved from "+this.currPos.x+" "+this.currPos.y+" to: "+this.currPos.x+this.moveDir.x+" "+this.currPos.y+this.moveDir.y)
             
@@ -855,7 +855,7 @@ class Emotion{
 
 			}
 			this.chargingCounter++;
-			if(this.chargingCounter	> 30 && this.currentlyCharging.getAverageEnergy()>environment.simulation.carChargeLimit){
+			if(this.chargingCounter	> 60 && this.currentlyCharging.getAverageEnergy()>environment.simulation.carChargeLimit){
 				this.chargingCounter= 0;
 
 				console.log("eine sec rum");
