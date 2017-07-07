@@ -82,7 +82,7 @@ body
 
     &:hover #toggle-button
         background-color: $darkGreen//#666
-    
+
     #project-title
         float: left
         max-width: $sidebarWidth + 50
@@ -178,6 +178,7 @@ body
             border-top: 1px solid #86A3BA
             position: relative
             top: -1px
+            +animation(400ms)
             +glow(10px, #FFF)
 
 .columns
@@ -232,7 +233,7 @@ body
 
         &.top
             padding: 0 5px 12px
-    
+
     .icon
         width: 34px
         height: 34px
@@ -287,7 +288,7 @@ body
             font-size: 36px
             color: #FFF
             background-color: darken(#363D45, 5%)
-        
+
             &:focus
                 outline: none
 
@@ -344,7 +345,7 @@ body
             font-size: 14px
             position: absolute
             top: -12px
-        
+
         &:focus
             outline: none
 
