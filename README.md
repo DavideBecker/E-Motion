@@ -3,8 +3,8 @@
 ## Development setup
 
 ### Requirements
-[Node with npm](https://nodejs.org/en/)    
-[git](https://git-scm.com/)
+* [Node with npm](https://nodejs.org/en/)
+* [git](https://git-scm.com/)
 
 
 ### First time setup
@@ -18,17 +18,29 @@
 ### Developing
 While developing you should run `gulp watch`. This will automatically compile files as they are saved as well as reload the electron instance (and a bunch of other cool stuff)
 
+### Linting
+This project contains a very strict eslint config. Install an eslint linter for your favorite code editor to get code formatting and syntax error highlights. Gulp also outputs eslint messages to the console
 
-## Project structure
-```javascript
-.
-├─── src
-│    ├─── images // All images in here get compressed
-│    ├─── scripts // Put .js files in this folder. Libraries etc in ./vendor
-│    │    ├─── vendor
-│    │    └─── main.js
-│    └─── styles
-│         └─── main.sass
-├─── index.html
-└─── main.js
-```
+### Gulp tasks
+All tasks that alter files in `/src/` output to `assets`
+| Command | Action |
+|---|---|
+| `gulp styles` | Compiles `/src/styles/main.sass` |
+| `gulp scripts:lint` | Lints all scripts in `/src/scripts/` except the vendor folder
+| `gulp scripts` | Pipes all scripts in `/src/scripts/` through babel and uglifies them. Also runs `scripts:lint` |
+| `gulp images` | Minifies all images in `/src/images/`
+| `gulp vectors` | Moves all files in `/src/vectors/` |
+| `gulp data` | Moves all files in `/src/data/` |
+| `gulp fonts` | Moves all files in `/src/fonts/` |
+| `gulp watch` | Watches for file changes in the above folders and runs the respective task automatically when a file changes. The images task is excluded from this for performance reasons |
+| `gulp clean` | Deletes the `/assets/` folder |
+| `gulp` | Runs `styles`, `scripts`, `images`, `vectors`, `data` and `fonts` after running `clean` |
+| `gulp pages:clean` | Deletes the `/docs/` folder |
+| `gulp pages:generate` | Generates GitHub Pages structure by copying the `/assets/` folder and `index.html` to `/docs/` |
+| `gulp pages` | Runs `pages:clean` and then `pages:generate` |
+
+
+## Creating electron apps
+The easiest way to create electron apps is with the node package `electron-packager`. Install it with `npm install electron-packager -g`.
+
+Once installed you can build for all systems by using `electron-packager ./ e-motion --all --overwrite --out=./builds`
