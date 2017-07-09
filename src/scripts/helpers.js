@@ -44,7 +44,7 @@ function resize(canvas) {
     var sidebarWidth = $('body').hasClass('nav-active') ? $('#sidebar').width() : 0
 
     environment.scale = min(canvas.windowHeight / 500, (canvas.windowWidth - sidebarWidth) / 550);
-    canvas.resizeCanvas(canvas.windowWidth - sidebarWidth, canvas.windowHeight);
+    canvas.resizeCanvas(canvas.windowWidth - sidebarWidth + 100, canvas.windowHeight);
 }
 
 function findStuckCar() {

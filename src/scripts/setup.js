@@ -1,5 +1,9 @@
-var testTruck
 var queue = []
+var timer = 1;
+var daytimeCycle = 1;
+var backgroundBrightness = 0;
+var brightDir = 0;
+var staticMap = new p5(renderMap)
 
 function setup() {
     frameRate(60)
@@ -60,11 +64,16 @@ function setup() {
             return item.type != 'city'
         })
     })
-}
 
-var timer = 1;
-var daytimeCycle = 1;
-var staticMap = new p5(renderMap)
+    Events.on('nightEnd', function() {
+        brightDir = 0.3
+    })
+
+
+    Events.on('nightStart', function() {
+        brightDir = -1
+    })
+}
 
 function windowResized() {
     resize(window)

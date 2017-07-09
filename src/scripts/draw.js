@@ -2,6 +2,12 @@ function draw() {
     clear()
 
     var dt = timer % environment.dayDuration;
+    var hdd = environment.dayDuration / 2
+
+    backgroundBrightness = constrain(backgroundBrightness + brightDir, 0, 255)
+    var grey = constrain(backgroundBrightness, 0, 255)
+
+    background(255, 0, grey, 0.5)
 
     environment.daytime = dt / environment.dayDuration;
 
@@ -58,6 +64,14 @@ function draw() {
         // text(eventType + ' - ' + Events.isActive(eventType), 100, 100 + 20 * evnt)
 
         evnt += 1
+    }
+
+    if(dt == Math.round(eventTimes.startOfWorkday.start / 2)) {
+        Events.trigger('nightEnd')
+    }
+
+    if(dt == Math.round(eventTimes.endOfWorkday.start + environment.dayDuration / 20)) {
+        Events.trigger('nightStart')
     }
 
     timer += 1;

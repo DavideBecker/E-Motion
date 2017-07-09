@@ -61,7 +61,7 @@ class City extends Node {
     }
 
     render() {
-        fill(51)
+        fill(20)
         noStroke()
         if(this.parkedCars.length) {
             fill(chargeToColor(this.charge))

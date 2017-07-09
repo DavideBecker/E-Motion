@@ -8,9 +8,9 @@ var environment = {
     truckSize: 20,
 
     simulation: {
-        truckAmount: 5,
+        truckAmount: 10,
         truckUptime: 6, // h
-        carAmount: 100,
+        carAmount: 200,
         carChargeLimit: 0.25, // %
         averageCarCharge: 0.5,
         totalCarCharge: 0,
@@ -43,7 +43,7 @@ var eventTimes = {
         end: Math.round(environment.dayDuration * 0.35)
     },
     endOfWorkday: {
-        start: Math.round(environment.dayDuration * 0.35),
+        start: Math.round(environment.dayDuration * 0.3),
         end: environment.dayDuration - 1
     },
     nightCharge: {

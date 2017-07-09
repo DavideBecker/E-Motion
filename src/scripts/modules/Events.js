@@ -5,13 +5,13 @@ class EventManager {
     }
 
     enable(eventType) {
-        console.log(eventType, 'enabled');
+        console.log(eventType, 'flag enabled');
 
         this.flags[eventType] = true
     }
 
     disable(eventType) {
-        console.log(eventType, 'disabled');
+        console.log(eventType, 'flag disabled');
 
         this.flags[eventType] = false
     }
@@ -21,7 +21,7 @@ class EventManager {
     }
 
     on(eventType, func) {
-        console.log(eventType, 'created');
+        console.log('Event listener for', eventType, 'created');
 
         this.tracker[eventType] = func;
     }
