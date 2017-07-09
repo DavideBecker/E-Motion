@@ -33,7 +33,7 @@ class Truck extends Vehicle {
                 var car = city.parkedCars[id];
 
                 if(car.charge / car.capacity < environment.simulation.carChargeLimit) { //car.charge / car.capacity < environment.simulation.carChargeLimit) {
-                    car.charge += car.chargeSpeed
+                    car.charge += car.chargeSpeed / city.parkedCars.length
                 }
 
                 if(car.charge > car.capacity) {

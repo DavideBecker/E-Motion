@@ -8,7 +8,7 @@ class Car extends Vehicle {
         this.capacity = 24
         this.charge = this.capacity;
         this.dischargeSpeed = 0.00185;
-        this.chargeSpeed = 0.2;
+        this.chargeSpeed = 0.07;
         this.type = 'car'
 
         cars.push(this);
