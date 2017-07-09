@@ -4,18 +4,18 @@ function renderAllNodes() {
 
         if(node.isCity) {
             fill(50, 200, 0)
-            text(cityDict[node.id], node.x + 5, node.y - 5)
+            text(cityDict[node.id], node.x * environment.scale + 5, node.y * environment.scale - 5)
         }
 
         var size = 10;
 
-        ellipse(node.x, node.y, size, size)
+        ellipse(node.x * environment.scale, node.y * environment.scale, size, size)
     })
 }
 
 function mousePressed() {
     Nodes.forAll((nodeIndex, node) => {
-        if(dist(mouseX, mouseY, node.x, node.y) < 5) {
+        if(dist(mouseX, mouseY, node.x * environment.scale, node.y * environment.scale) < 5) {
             console.log('node clicked', Nodes.getById(nodeIndex));
         }
     })
@@ -24,10 +24,10 @@ function mousePressed() {
         var car = cars[i];
 
         if(
-            mouseX > car.position.x &&
-            mouseX < car.position.x + environment.carSize &&
-            mouseY > car.position.y &&
-            mouseY < car.position.y + environment.carSize
+            mouseX > car.position.x * environment.scale &&
+            mouseX < car.position.x * environment.scale + environment.carSize &&
+            mouseY > car.position.y * environment.scale &&
+            mouseY < car.position.y * environment.scale + environment.carSize
         ) {
             console.log('car clicked', car);
         }
@@ -43,18 +43,24 @@ function showPathFor(wroom) {
         var to = wroom.target
         var path = wroom.moveStack
 
-        fill('#00FFFF')
-        ellipse(home.x, home.y, 20, 20)
+        if(home) {
+            fill('#00FFFF')
+            ellipse(home.x * environment.scale, home.y * environment.scale, 20, 20)
+        }
 
-        fill('#FF0000')
-        ellipse(from.x, from.y, 15, 15)
+        if(from) {
+            fill('#FF0000')
+            ellipse(from.x * environment.scale, from.y * environment.scale, 15, 15)
+        }
 
-        fill('#00FF00')
-        ellipse(to.x, to.y, 10, 10)
+        if(to) {
+            fill('#00FF00')
+            ellipse(to.x * environment.scale, to.y * environment.scale, 10, 10)
+        }
 
         if(next) {
             fill('#0000FF')
-            ellipse(next.x, next.y, 5, 5)
+            ellipse(next.x * environment.scale, next.y * environment.scale, 5, 5)
         }
 
         var prev = wroom.position
@@ -63,7 +69,12 @@ function showPathFor(wroom) {
             var curr = Nodes.getById(path[index])
 
             stroke(100, 50, 0)
-            line(curr.x, curr.y, prev.x, prev.y)
+            line(
+                curr.x * environment.scale,
+                curr.y * environment.scale,
+                prev.x * environment.scale,
+                prev.y * environment.scale
+            )
             prev = curr
         }
     }

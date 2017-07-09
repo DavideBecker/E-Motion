@@ -34,6 +34,7 @@ var environment = {
 }
 
 var cars = []
+var trucks = []
 var graph = new Graph(nodeGraph)
 
 var eventTimes = {

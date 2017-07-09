@@ -47,6 +47,12 @@ function resize(canvas) {
     canvas.resizeCanvas(canvas.windowWidth - sidebarWidth, canvas.windowHeight);
 }
 
+function findStuckCar() {
+    var stuckCars = cars.map(function(car) { return car.isStuck })
+
+    return stuckCars[floor(random(0, stuckCars.length))]
+}
+
 function hsv2rgb(hue, saturation, vibrancy) {
     // adapted from http://schinckel.net/2012/01/10/hsv-to-rgb-in-javascript/
     var rgb, i,
@@ -91,6 +97,10 @@ function hsv2rgb(hue, saturation, vibrancy) {
 }
 
 function chargeToColor(charge) {
+    charge *= 1 / environment.simulation.carChargeLimit
+    if(charge > 1) {
+        charge = 1
+    }
     var hue = 120 * charge
     var sat = abs(charge - 50) / 50
 

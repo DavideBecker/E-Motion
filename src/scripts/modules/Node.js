@@ -5,5 +5,6 @@ class Node {
         this.isCity = raw.isCity
         this.x = raw.x
         this.y = raw.y
+        this.type = 'node'
     }
 }

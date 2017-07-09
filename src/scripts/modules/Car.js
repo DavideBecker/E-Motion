@@ -7,6 +7,8 @@ class Car extends Vehicle {
         this.position = createVector(this.location.x, this.location.y);
         this.capacity = 24
         this.charge = this.capacity;
+        this.dischargeSpeed = 0.00185;
+        this.chargeSpeed = 0.2;
         this.type = 'car'
 
         cars.push(this);
@@ -21,14 +23,22 @@ class Car extends Vehicle {
             return
         }
 
-        noStroke()
+        applyMatrix()
+        strokeWeight(1)
+        stroke('#444444')
         fill(chargeToColor(this.charge / this.capacity))
+        translate(this.position.x * environment.scale, this.position.y * environment.scale)
+        if(this.next) {
+            rotate(atan2(this.position.y - this.next.y, this.position.x - this.next.x))
+        }
         rect(
-            this.position.x * environment.scale,
-            this.position.y * environment.scale,
+            0,
+            0,
+            environment.carSize * 1.5,
             environment.carSize,
-            environment.carSize
+            4
         )
+        resetMatrix()
     }
 
     update() {

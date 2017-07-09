@@ -4,8 +4,8 @@ function renderMap(sketch) {
             for(var connectionIndex = 0; connectionIndex < node.connectedTo.length; connectionIndex++) {
                 var connectedNode = Nodes.getById(node.connectedTo[connectionIndex]);
 
-                map.stroke(196);
-                map.strokeWeight(3)
+                map.stroke('#C6C6C6');
+                map.strokeWeight(5)
                 map.line(
                     node.x * environment.scale,
                     node.y * environment.scale,

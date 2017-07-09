@@ -6,15 +6,17 @@ class Vehicle {
         this.moveStack = [];
         this.position = createVector(0, 0);
         this.velocity = createVector(0, 0);
+        this.capacity = 1
         this.charge = 1;
-        this.discharge = 0.012
+        this.dischargeSpeed = 0.012
+        this.isSlacker = false
     }
 
     getChargePercentage() {
         return this.charge / this.capacity
     }
 
-    planPath() {
+    fancyPath() {
         var detour = Nodes.getRandomNode()
 
         return graph.findShortestPath(
@@ -28,42 +30,59 @@ class Vehicle {
         )
     }
 
+    fastestPath() {
+        return graph.findShortestPath(
+            this.location.id,
+            this.target.id
+        )
+    }
+
+    driveTo(node, done) {
+        this.whenTargetIsReached = done
+
+        if(this.location.id != node.id) {
+            this.target = node;
+            // console.log(this, 'is driving from', cityDict[this.location.id], 'to', cityDict[this.target.id])
+            if(this.isSlacker) {
+                this.moveStack = this.fancyPath()
+            } else {
+                this.moveStack = this.fastestPath()
+            }
+            this.isDriving = true;
+            this.inCity = false;
+            this.toNextNode()
+        } else if(done) {
+            done()
+        }
+    }
+
     stop() {
         this.isDriving = false
         this.velocity.set(0, 0)
+        if(this.next) {
+            this.location = this.next
+        }
     }
 
     toNextNode() {
-        if(this.isStuck) {
-            this.stop()
-
-            return
-        }
-
         this.next = Nodes.getById(this.moveStack.shift());
 
         if(this.next && !this.isStuck) {
             var diff = createVector(this.next.x - this.position.x, this.next.y - this.position.y)
             var distance = dist(this.position.x, this.position.y, this.next.x, this.next.y);
 
-            this.velocity = diff.div(distance)
+            this.velocity = diff.div(distance * 2)
         } else {
             this.stop()
             this.inCity = true;
             this.location = this.target;
-            if(this.target.isCity) {
+            if(this.target.isCity && this.type == 'car') {
                 this.enteredCity(this.target)
             }
+            if(this.whenTargetIsReached) {
+                this.whenTargetIsReached();
+            }
         }
-    }
-
-    driveTo(node) {
-        this.target = node;
-        // console.log(this, 'is driving from', cityDict[this.location.id], 'to', cityDict[this.target.id])
-        this.moveStack = this.planPath()
-        this.isDriving = true;
-        this.inCity = false;
-        this.toNextNode()
     }
 
     reachedNode() {
@@ -73,15 +92,21 @@ class Vehicle {
     }
 
     updatePosition() {
+        if(this.isStuck) {
+            return
+        }
+
         this.position.add(this.velocity)
 
         if(this.isDriving) {
 
-            this.charge -= this.discharge
+            this.charge -= this.dischargeSpeed
 
             if(this.charge <= 0) {
                 this.charge = 0
+                this.location = this.next
                 this.isStuck = true
+                Events.trigger('carStuck', this)
             }
 
             if(this.reachedNode()) {
@@ -102,5 +127,17 @@ class Vehicle {
         city.parkedCars.splice(city.parkedCars.indexOf(this), 1)
         city.updateAverageCharge(-this.getChargePercentage())
         this.inCity = false
+    }
+
+    highlight() {
+        this.render = function() {
+            fill('#FF0000')
+            rect(
+                this.position.x * environment.scale,
+                this.position.y * environment.scale,
+                50,
+                50
+            )
+        }
     }
 }

@@ -6,6 +6,8 @@ class City extends Node {
 
         this.parkedCars = [];
         this.charge = 1
+        this.name = cityDict[this.id]
+        this.type = 'city'
 
         cities.push(this)
     }
@@ -17,8 +19,14 @@ class City extends Node {
 
         var car = this.parkedCars.pop()
 
-        this.updateAverageCharge(car.getChargePercentage())
+        // this.updateAverageCharge(car.getChargePercentage())
         car.driveTo(target)
+    }
+
+    needsCharging() {
+        return this.parkedCars.find(function(car) {
+            return car.charge / car.capacity < environment.simulation.carChargeLimit
+        })
     }
 
     updateAverageCharge(difference) {
@@ -35,7 +43,7 @@ class City extends Node {
         for(var i in this.parkedCars) {
             var car = this.parkedCars[i];
 
-            total += car.charge
+            total += car.charge / car.capacity
         }
 
         this.charge = total / this.parkedCars.length
@@ -54,12 +62,17 @@ class City extends Node {
 
     render() {
         fill(51)
-
+        noStroke()
         if(this.parkedCars.length) {
             fill(chargeToColor(this.charge))
         }
 
-        ellipse(this.x * environment.scale, this.y * environment.scale, 20, 20)
+        if(this.name == 'Stuttgart') {
+            ellipse(this.x * environment.scale, this.y * environment.scale, 35 * environment.scale, 35 * environment.scale)
+        } else {
+            ellipse(this.x * environment.scale, this.y * environment.scale, 20 * environment.scale, 20 * environment.scale)
+        }
+
     }
 
     update() {
