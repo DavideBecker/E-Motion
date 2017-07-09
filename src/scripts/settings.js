@@ -10,7 +10,9 @@ var environment = {
     simulation: {
         truckAmount: 5,
         truckUptime: 6, // h
+
         carAmount: 100,
+        carCapacity: 24,
         carChargeLimit: 0.25, // %
         averageCarCharge: 0.5,
         totalCarCharge: 0,

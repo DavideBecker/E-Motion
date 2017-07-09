@@ -227,5 +227,27 @@ $(document).ready(function() {
     $('.update-sim').change(function() {
         updateCalculations()
     })
+
+    var $chargeLabel = $('#average-charge > .amount')
+    var $chargeValue = $('#average-charge > .bar > .progress')
+
+    function updateAverageCharge() {
+        var val = Math.round(
+            environment.simulation.totalCarCharge /
+            environment.simulation.carCapacity// /
+            // environment.simulation.carChargeLimit
+        ) + '%'
+
+        $chargeLabel.html(val)
+        $chargeValue.css('width', val)
+    }
+
+    function delayedTick() {
+        updateAverageCharge()
+    }
+
+    delayedTick()
+
+    var tick = setInterval(delayedTick, 250)
 })
 

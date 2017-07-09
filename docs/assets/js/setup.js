@@ -23,7 +23,7 @@ function setup() {
 
         car.charge = car.capacity * environment.simulation.carChargeLimit;
         car.enteredCity(car.home);
-        environment.simulation.totalCarCharge += 1;
+        environment.simulation.totalCarCharge += car.charge;
 
         car.isSlacker = Math.random() >= 0.1;
     }

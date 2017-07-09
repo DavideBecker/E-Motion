@@ -8,7 +8,7 @@ class Vehicle {
         this.velocity = createVector(0, 0);
         this.capacity = 1
         this.charge = 1;
-        this.dischargeSpeed = 0.012
+        this.dischargeSpeed = 0.009//0.012
         this.isSlacker = false
     }
 
@@ -100,7 +100,10 @@ class Vehicle {
 
         if(this.isDriving) {
 
-            this.charge -= this.dischargeSpeed
+            if(this.type == 'car') {
+                this.charge -= this.dischargeSpeed
+                environment.simulation.totalCarCharge -= this.dischargeSpeed
+            }
 
             if(this.charge <= 0) {
                 this.charge = 0

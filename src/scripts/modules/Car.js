@@ -5,7 +5,7 @@ class Car extends Vehicle {
         this.home = Nodes.getRandomTown();
         this.location = this.home;
         this.position = createVector(this.location.x, this.location.y);
-        this.capacity = 24
+        this.capacity = environment.simulation.carCapacity
         this.charge = this.capacity;
         this.dischargeSpeed = 0.00185;
         this.chargeSpeed = 0.07;
