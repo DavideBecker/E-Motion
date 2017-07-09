@@ -39,6 +39,24 @@ class NodeManager {
     getByName(name) {
         return this.nodes[cityDict[name]]
     }
+
+    getStuttgart() {
+        return this.getByName('Stuttgart')
+    }
+
+    getTownThatNeedsCharging() {
+        var potentialTowns = [];
+
+        for(var i in cityIDs) {
+            var node = this.nodes[cityIDs[i]]
+
+            if(node.charge < 1) {
+                potentialTowns.push(node);
+            }
+        }
+
+        return potentialTowns[floor(random(0, potentialTowns.length))]
+    }
 }
 
 var Nodes = new NodeManager();
