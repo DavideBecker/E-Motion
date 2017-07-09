@@ -219,9 +219,13 @@ $(document).ready(function() {
         console.log('carChargeLimit changed')
 
         environment.simulation.carChargeLimit = Number($(this).val())
+        if(Events.isActive('nightCharge')) {
+            Events.trigger('nightChargeStart')
+        }
     })
 
     $('.update-sim').change(function() {
         updateCalculations()
     })
 })
+

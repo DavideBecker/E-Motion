@@ -1,17 +1,19 @@
 var environment = {
     timeline: 0,
     daytime: 0,
-    dayDuration: 5000,
+    dayDuration: 10000,
     scale: 1,
 
     carSize: 10,
+    truckSize: 20,
 
     simulation: {
-        truckAmount: 20,
+        truckAmount: 5,
         truckUptime: 6, // h
-        carAmount: 80,
+        carAmount: 200,
         carChargeLimit: 0.25, // %
         averageCarCharge: 0.5,
+        totalCarCharge: 0,
 
         static: {
             truck: {
@@ -34,7 +36,17 @@ var environment = {
 var cars = []
 var graph = new Graph(nodeGraph)
 
-var events = {
-    driveToCenter: false,
-    driveHome: false,
+var eventTimes = {
+    startOfWorkday: {
+        start: Math.round(environment.dayDuration * 0.05),
+        end: Math.round(environment.dayDuration * 0.35)
+    },
+    endOfWorkday: {
+        start: Math.round(environment.dayDuration * 0.35),
+        end: environment.dayDuration - 1
+    },
+    nightCharge: {
+        start: Math.round(environment.dayDuration * 0.7),
+        end: environment.dayDuration - 1
+    },
 }
