@@ -25,6 +25,7 @@
     <script src="assets/js/modules/Node.js"></script>
     <script src="assets/js/modules/City.js"></script>
     <script src="assets/js/modules/NodeManager.js"></script>
+    <script src="assets/js/modules/Bridges.js"></script>
     <script src="assets/js/ui.js"></script>
     <script src="assets/js/modules/Map.js"></script>
     <script src="assets/js/modules/Vehicle.js"></script>
@@ -112,11 +113,29 @@
 
         <h1>Autos</h1>
         <div class="data-group">
-            <div class="progress-bar">
-                <span class="label">Aktuelle durchschnittliche Ladung</span>
-                <span class="amount">50%</span>
+            <div class="static-value-group three seamless">
+                <span class="headline">Stehengebliebene Autos</span>
+                <div class="static-value">
+                    <span id="stuckCarsToday" class="amount">0</span>
+                    <span class="label" tooltip="So vielen Autos ist heute der Tank leer gegangen">Heute</span>
+                </div><!--
+                --><div class="static-value">
+                    <span id="stuckCarsTotal" class="amount">0</span>
+                    <span class="label" tooltip="So vielen Autos ist der Tank seit Simulationsstart leer gegangen">Insgesamt</span>
+                </div><!--
+                --><div class="static-value">
+                    <span id="stuckCarsAverage" class="amount">0</span>
+                    <span class="label" tooltip="So viele Autos bleiben im Durchschnitt pro Tag liegen. Versuche das Ladelimit der Autos oder die Anzahl der Trucks zu erhöhen.">&#216; pro Tag</span>
+                </div>
+            </div>
+        </div>
+        <div class="data-group">
+            <div id="average-charge" class="progress-bar">
+                <span class="label" tooltip="Wie viel % der Ladung, die im Ladelimit angegeben wurden, haben die Autos aktuell noch">Aktueller Durchschnitt der benötigten Ladung</span>
                 <div class="bar">
-                    <div class="progress" style="width: 50%"></div>
+                    <div class="progress" style="width: 0%">
+                        <span class="amount">0%</span>
+                    </div>
                 </div>
             </div>
         </div>

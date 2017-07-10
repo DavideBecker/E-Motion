@@ -37,7 +37,10 @@ var Truck = function (_Vehicle) {
                 car.charge += car.chargeSpeed;
             } else {
                 if (car.charge > car.capacity) {
-                    car.charge = car.capacity;
+                    var diff = car.charge - car.capacity;
+
+                    car.charge -= diff;
+                    environment.simulation.totalCarCharge -= diff;
                 }
                 this.busy = false;
                 this.rescueTarget = false;
@@ -54,10 +57,14 @@ var Truck = function (_Vehicle) {
                     if (car.charge / car.capacity < environment.simulation.carChargeLimit) {
                         //car.charge / car.capacity < environment.simulation.carChargeLimit) {
                         car.charge += car.chargeSpeed / city.parkedCars.length;
+                        environment.simulation.totalCarCharge += car.chargeSpeed / city.parkedCars.length;
                     }
 
                     if (car.charge > car.capacity) {
-                        car.charge = car.capacity;
+                        var diff = car.charge - car.capacity;
+
+                        car.charge -= diff;
+                        environment.simulation.totalCarCharge -= diff;
                     }
                 }
 
@@ -113,6 +120,7 @@ var Truck = function (_Vehicle) {
             if (this.next) {
                 rotate(atan2(this.position.y - this.next.y, this.position.x - this.next.x));
             }
+            rect(-environment.truckSize * 1.05, 0, environment.truckSize / 1.5, environment.truckSize / 1.5, 4);
             rect(0, 0, environment.truckSize * 1.5, environment.truckSize, 4);
             resetMatrix();
         }

@@ -151,34 +151,51 @@ $(document).ready(function () {
     });
 
     $('#truckAmount').change(function () {
-        console.log('truckAmount changed');
+        var diff = Number($(this).val()) - environment.simulation.truckAmount;
 
-        environment.simulation.truckAmount = Number($(this).val());
+        console.log('truckAmount changed by', diff);
+        updateAmountOfTrucks(diff);
     });
 
     $('#carAmount').change(function () {
-        console.log('carAmount changed');
+        var diff = Number($(this).val()) - environment.simulation.carAmount;
 
-        environment.simulation.carAmount = Number($(this).val());
+        console.log('carAmount changed by', diff);
+        updateAmountOfCars(diff);
     });
 
     $('#truckUptime').change(function () {
         console.log('truckUptime changed');
 
-        environment.simulation.truckUptime = Number($(this).val());
+        updateTruckUptime(Number($(this).val()));
     });
 
     $('#carChargeLimit').change(function () {
         console.log('carChargeLimit changed');
 
         environment.simulation.carChargeLimit = Number($(this).val());
-        if (Events.isActive('nightCharge')) {
-            Events.trigger('nightChargeStart');
-        }
     });
 
     $('.update-sim').change(function () {
         updateCalculations();
     });
+
+    var $chargeLabel = $('#average-charge > .bar > .progress > .amount');
+    var $chargeValue = $('#average-charge > .bar > .progress');
+
+    function updateAverageCharge() {
+        var val = Math.min(Math.max(Math.round(environment.simulation.totalCarCharge / environment.simulation.carCapacity / environment.simulation.carChargeLimit), 0), 100) + '%';
+
+        $chargeLabel.html(val);
+        $chargeValue.css('width', val);
+    }
+
+    function delayedTick() {
+        updateAverageCharge();
+    }
+
+    delayedTick();
+
+    var tick = setInterval(delayedTick, 250);
 });
 //# sourceMappingURL=ui.js.map

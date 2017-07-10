@@ -19,11 +19,16 @@ var Car = function (_Vehicle) {
         _this.home = Nodes.getRandomTown();
         _this.location = _this.home;
         _this.position = createVector(_this.location.x, _this.location.y);
-        _this.capacity = 24;
-        _this.charge = _this.capacity;
+        _this.capacity = environment.simulation.carCapacity;
+        _this.charge = _this.capacity * environment.simulation.carChargeLimit;
         _this.dischargeSpeed = 0.00185;
         _this.chargeSpeed = 0.07;
         _this.type = 'car';
+        _this.isSlacker = Math.random() >= 0.1;
+
+        environment.simulation.totalCarCharge += _this.charge;
+
+        _this.enteredCity(_this.home);
 
         cars.push(_this);
         return _this;
