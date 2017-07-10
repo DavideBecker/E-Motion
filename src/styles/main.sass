@@ -16,7 +16,7 @@ $glowBackground: #B6C0CC
     background: $glowBackground
     +shadow($spread, $color)
 
-*
+html *, html *:before, html *:after
     box-sizing: border-box
 
 html *
@@ -58,7 +58,7 @@ body
     // left: -50px
     +animation(500ms)
     color: #A5B1BD
-    overflow-y: scroll
+    overflow-y: auto
     z-index: 999
 
     h1
@@ -136,43 +136,82 @@ body
 .label
     font-weight: 300
     font-size: 13px
+    padding: 5px 7px
 
     &[tooltip]
+        white-space: nowrap
+        display: inline-block
+        background-color: transparent
+        transition: background 500ms ease, padding 500ms ease
+        text-align: center
 
         &:after
+            display: inline-block
             content: " [?]"
             color: $mainGreen
-            cursor: help
+            transition: all 500ms ease
+            width: 21px
+            text-align: center
+            opacity: 1
 
-        &:hover:before
+        &:before
+            overflow: hidden
+            display: block
             content: attr(tooltip)
             position: absolute
+            width: 100%
+            padding: 10px 10px 10px 60px
+            transition: all 500ms ease
+            white-space: normal
             text-align: center
-            left: 50px
-            width: $sidebarWidth - 20px
             background-color: $darkGreen
-            padding: 10px
-            margin-top: -60px
+            left: 0
             color: #FFF
-            z-index: 99999
-            line-height: 16px
+            z-index: -1
+            line-height: 20px
+            pointer-events: none
+            margin-top: 0
+            opacity: 0
+
+        &:hover
+            background-color: $darkGreen
+            color: #FFF
+            cursor: help
+            // transition: background 0ms, padding 0ms ease, opacity 0ms ease
+            padding: 5px 14px
+
+            &:after
+                color: #FFF
+                // transition: background 0ms, padding 0ms ease, opacity 0ms ease
+                width: 0
+                opacity: 0
+
+            &:before
+                z-index: 99999
+                margin-top: 18px
+                opacity: 1
 
 .progress-bar
     overflow: hidden
-    padding: 14px
+    padding: 20px
 
     .amount
         float: right
         font-size: 18px
         font-weight: 100
+        padding-top: 5px
+
+    // .label
+    //     display: block
+    //     margin-bottom: 7px
 
     .bar
-        width: 100%
+        width: calc(100% - 14px)
         height: 2px
         border-top: 1px solid #476283
         background-color: #506B8A
         float: left
-        margin: 8px 0 4px
+        margin: 15px 7px 4px
 
         .progress
             height: 2px
@@ -220,20 +259,22 @@ body
     .amount
         font-weight: 100
         font-size: 26px
+        margin-bottom: 12px
+        display: block
 
     .unit
         font-weight: 100
         font-size: 16px
 
-    .label
-        font-weight: 300
-        display: block
-        margin: 12px 5px 0
-        font-size: 13px
-        line-height: 17px
+    // .label
+    //     font-weight: 300
+    //     display: block
+    //     margin: 12px 5px 0
+    //     font-size: 13px
+    //     line-height: 17px
 
-        &.top
-            padding: 0 5px 12px
+    //     &.top
+    //         padding: 0 5px 12px
 
     .icon
         width: 34px

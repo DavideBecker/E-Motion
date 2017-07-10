@@ -98,6 +98,13 @@ class Truck extends Vehicle {
             rotate(atan2(this.position.y - this.next.y, this.position.x - this.next.x))
         }
         rect(
+            -environment.truckSize * 1.05,
+            0,
+            environment.truckSize / 1.5,
+            environment.truckSize / 1.5,
+            4
+        )
+        rect(
             0,
             0,
             environment.truckSize * 1.5,

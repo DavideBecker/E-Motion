@@ -106,3 +106,31 @@ function chargeToColor(charge) {
 
     return hsv2rgb(hue, sat, 1)
 }
+
+function addToQueue(thing) {
+    if(thing.type == 'city') {
+        queue.push(thing)
+    } else if(thing.type == 'car') {
+        var pos = queue.findIndex((elem) => elem.type != 'car')
+
+        if(pos < 0) {
+            pos = queue.length
+        }
+
+        queue.splice(pos, 0, thing);
+    }
+}
+
+function fillQueueWithCities() {
+    for(var cityIndex in cities) {
+        var city = cities[cityIndex];
+
+        if(city.needsCharging() && city.id != cityDict.Stuttgart) {
+            Events.trigger('cityNeedsCharging', city)
+        }
+    }
+}
+
+function clearQueueFromCities() {
+    queue = queue.filter((item) => item.type != 'city')
+}

@@ -7,9 +7,15 @@ var environment = {
     carSize: 10,
     truckSize: 20,
 
+    statistics: {
+        stuckCarsToday: 0,
+        stuckCarsTotal: 0,
+        daysPassed: 0
+    },
+
     simulation: {
-        truckAmount: 5,
-        truckUptime: 6, // h
+        truckAmount: 6,
+        truckUptime: 7, // h
 
         carAmount: 100,
         carCapacity: 24,
@@ -45,11 +51,11 @@ var eventTimes = {
         end: Math.round(environment.dayDuration * 0.35)
     },
     endOfWorkday: {
-        start: Math.round(environment.dayDuration * 0.3),
+        start: Math.round(environment.dayDuration * 0.4),
         end: environment.dayDuration - 1
     },
     nightCharge: {
-        start: Math.round(environment.dayDuration * 0.7),
+        start: Math.round(environment.dayDuration * (1 - environment.simulation.truckUptime / 24)),
         end: environment.dayDuration - 1
     },
 }

@@ -17,13 +17,7 @@ function setup() {
     resize(window)
 
     for(var carIndex = 0; carIndex < environment.simulation.carAmount; carIndex++) {
-        var car = new Car()
-
-        car.charge = car.capacity * environment.simulation.carChargeLimit
-        car.enteredCity(car.home)
-        environment.simulation.totalCarCharge += car.charge
-
-        car.isSlacker = Math.random() >= 0.1
+        new Car()
     }
 
     for(var truckIndex = 0; truckIndex < environment.simulation.truckAmount; truckIndex++) {
@@ -34,39 +28,32 @@ function setup() {
     console.table(trucks)
 
     Events.on('carStuck', function(wroom) {
-        var pos = queue.findIndex(function(elem) {
-            return elem.type != 'car'
-        })
+        addToQueue(wroom)
 
-        if(pos < 0) {
-            pos = queue.length
-        }
+        environment.statistics.stuckCarsToday += 1
+        environment.statistics.stuckCarsTotal += 1
 
-        queue.splice(pos, 0, wroom);
+        updateAverageStuckCars()
     })
 
     Events.on('cityNeedsCharging', function(city) {
-        queue.push(city);
+        addToQueue(city);
     })
 
     Events.on('nightChargeStart', function() {
-        for(var cityIndex in cities) {
-            var city = cities[cityIndex];
-
-            if(city.needsCharging() && city.id != cityDict.Stuttgart) {
-                Events.trigger('cityNeedsCharging', city)
-            }
-        }
+        fillQueueWithCities()
     })
 
     Events.on('nightChargeEnd', function() {
-        queue = queue.filter(function(item) {
-            return item.type != 'city'
-        })
+        clearQueueFromCities()
     })
 
     Events.on('nightEnd', function() {
         brightDir = 0.3
+
+        environment.statistics.daysPassed += 1
+        environment.statistics.stuckCarsToday = 0
+        updateAverageStuckCars()
     })
 
 

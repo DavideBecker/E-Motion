@@ -6,10 +6,15 @@ class Car extends Vehicle {
         this.location = this.home;
         this.position = createVector(this.location.x, this.location.y);
         this.capacity = environment.simulation.carCapacity
-        this.charge = this.capacity;
+        this.charge = this.capacity * environment.simulation.carChargeLimit
         this.dischargeSpeed = 0.00185;
         this.chargeSpeed = 0.07;
         this.type = 'car'
+        this.isSlacker = Math.random() >= 0.1
+
+        environment.simulation.totalCarCharge += this.charge
+
+        this.enteredCity(this.home)
 
         cars.push(this);
     }
