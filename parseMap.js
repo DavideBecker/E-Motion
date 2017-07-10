@@ -198,7 +198,8 @@ for(var i in streets) {
 }
 
 var graph = {}
-var townIDs = [];
+var cityIDs = [];
+var nodeIDs = [];
 
 //Generate graph
 for(var id in nodes) {
@@ -206,17 +207,19 @@ for(var id in nodes) {
 
     graph[node.id] = {}
 
+    nodeIDs.push(id);
+
     for(var i in towns) {
         var town = towns[i];
 
         if(dist(node.x, node.y, town.x, town.y) <= 1) {
-            node.isTown = true
-            townIDs.push(node.id)
+            node.isCity = true
+            cityIDs.push(node.id)
         }
     }
 
-    if(!node.isTown) {
-        node.isTown = false
+    if(!node.isCity) {
+        node.isCity = false
     }
 
     for(var i = 0; i < node.connectedTo.length; i++) {
@@ -257,22 +260,31 @@ var data = {
     cities: cities
 }
 
-console.log(data.towns)
-
 fs.writeFile('src/data/locations.js', 'var locations = ' + JSON.stringify(data), (err) => {
     if(err) {
         console.log(err);
+    } else {
+        console.log('locations.js updated');
     }
 });
 
-fs.writeFile('src/data/nodes.js', 'var nodes = ' + JSON.stringify(nodes) + ';var townIDs=' + JSON.stringify(townIDs), (err) => {
+var nodesContent =
+    'var rawNodes = ' + JSON.stringify(nodes) +
+    ';var cityIDs=' + JSON.stringify(cityIDs) +
+    ';var nodeIDs=' + JSON.stringify(nodeIDs)
+
+fs.writeFile('src/data/nodes.js', nodesContent, (err) => {
     if(err) {
         console.log(err);
+    } else {
+        console.log('nodes.js updated');
     }
 });
 
 fs.writeFile('src/data/nodeGraph.js', 'var nodeGraph = ' + JSON.stringify(graph), (err) => {
     if(err) {
         console.log(err);
+    } else {
+        console.log('nodeGraph.js updated');
     }
 });
