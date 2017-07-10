@@ -2,7 +2,6 @@ function draw() {
     clear()
 
     var dt = timer % environment.dayDuration;
-    var hdd = environment.dayDuration / 2
 
     backgroundBrightness = constrain(backgroundBrightness + brightDir, 0, 255)
     var grey = constrain(backgroundBrightness, 0, 255)
@@ -10,6 +9,9 @@ function draw() {
     background(255, 0, grey, 0.5)
 
     environment.daytime = dt / environment.dayDuration;
+
+    fill(255, 0, 255 - grey)
+    rect(0, 0, environment.daytime * width, 50)
 
     // console.log(environment.daytime)
 
