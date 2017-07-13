@@ -214,7 +214,8 @@ $(document).ready(function() {
     $('#truckUptime').change(function() {
         console.log('truckUptime changed')
 
-        updateTruckUptime(Number($(this).val()))
+        // updateTruckUptime(Number($(this).val()))
+        environment.simulation.truckUptime = Number($(this).val());
     })
 
     $('#carChargeLimit').change(function() {

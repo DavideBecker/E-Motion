@@ -10,9 +10,6 @@ function draw() {
 
     environment.daytime = dt / environment.dayDuration;
 
-    fill(255, 0, 255 - grey)
-    rect(0, 0, environment.daytime * width, 50)
-
     // console.log(environment.daytime)
 
     for(var carIndex = 0; carIndex < cars.length; carIndex++) {
