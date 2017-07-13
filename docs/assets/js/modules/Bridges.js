@@ -26,7 +26,7 @@ function updateAmountOfTrucks(diff) {
     }
 
     if (diff < 0) {
-        var removed = trucks.splice(0, diff);
+        var removed = trucks.splice(0, diff * -1);
 
         for (var rem in removed) {
             if (rem.workTarget && rem.isBusy) {
