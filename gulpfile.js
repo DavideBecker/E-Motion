@@ -114,7 +114,7 @@ gulp.task('scripts:lint', function() {
         }))
 })
 
-gulp.task('scripts', function() {
+gulp.task('scripts', ['scripts:lint'], function() {
     gulp.src(scriptPipe)
         .pipe(sourcemaps.init())
         // .pipe(concat(src.jsMain)).on('error', errorHandler)
@@ -126,7 +126,7 @@ gulp.task('scripts', function() {
         // .on('error', console.log)
         // .pipe(gulp.dest(dist.js))
         .pipe(babel()).on('error', errorHandler)
-        // .pipe(uglify()).on('error', errorHandler)
+        .pipe(uglify()).on('error', errorHandler)
         .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest(dist.js))
 
@@ -182,7 +182,7 @@ gulp.task('default', function() {
 })
 
 gulp.task('pages:clean', function() {
-    gulp.src('./docs/').pipe(clean());
+    return gulp.src('./docs/').pipe(clean());
 })
 
 gulp.task('pages:generate', function() {
@@ -191,5 +191,5 @@ gulp.task('pages:generate', function() {
 })
 
 gulp.task('pages', function() {
-    sequence('pages:clean', 'pages:generate');
+    sequence(['pages:clean'], ['pages:generate']);
 })
