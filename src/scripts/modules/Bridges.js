@@ -36,9 +36,9 @@ function updateAmountOfTrucks(diff) {
 }
 
 function updateAverageStuckCars() {
-    $('#stuckCarsAverage').html(environment.statistics.stuckCarsTotal / environment.statistics.daysPassed)
+    $('#stuckCarsAverage').html(round(environment.statistics.stuckCarsTotal / environment.statistics.daysPassed * 10) / 10)
     $('#stuckCarsToday').html(environment.statistics.stuckCarsToday)
-    $('#stuckCarsTotal').html(round(environment.statistics.stuckCarsTotal / 10) * 10)
+    $('#stuckCarsTotal').html(environment.statistics.stuckCarsTotal)
 }
 
 
